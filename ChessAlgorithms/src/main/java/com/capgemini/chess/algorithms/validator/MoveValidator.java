@@ -24,7 +24,8 @@ public class MoveValidator {
 			} else if (Math.abs(from.getX() - to.getX()) == 2 && Math.abs(from.getX() - to.getX()) == 1) {
 				return true;
 			} else {
-				throw new InvalidMoveException();
+				//throw new InvalidMoveException();
+				return false;
 			}
 		case ROOK:
 			if (Math.abs(from.getX() - to.getX()) == 0 && Math.abs(from.getY() - to.getY()) > 0) {
@@ -32,7 +33,8 @@ public class MoveValidator {
 			} else if (Math.abs(from.getX() - to.getX()) > 0 && Math.abs(from.getY() - to.getY()) == 0) {
 				return true;
 			} else {
-				throw new InvalidMoveException();
+				//throw new InvalidMoveException();
+				return false;
 			}
 		case KING:
 			if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
@@ -42,13 +44,15 @@ public class MoveValidator {
 			} else if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 0) {
 				return true;
 			} else {
-				throw new InvalidMoveException();
+				//throw new InvalidMoveException();
+				return false;
 			}
 		case BISHOP:
 			if (Math.abs(from.getX() - to.getX()) == Math.abs(from.getY() - to.getY())) {
 				return true;
 			} else {
-				throw new InvalidMoveException();
+				//throw new InvalidMoveException();
+				return false;
 			}
 		case QUEEN:
 			if (from.getX() - to.getX() == 0 && Math.abs(from.getY() - to.getY()) > 0) {
@@ -58,7 +62,8 @@ public class MoveValidator {
 			} else if (Math.abs(from.getX() - to.getX()) == Math.abs(from.getY() - to.getY())) {
 				return true;
 			} else {
-				throw new InvalidMoveException();
+				//throw new InvalidMoveException();
+				return false;
 			}
 		case PAWN:
 			if (piece.getColor().equals(Color.WHITE)) {
@@ -69,13 +74,15 @@ public class MoveValidator {
 							&& (from.getY() - to.getY() == -1 || from.getY() - to.getY() == -2)) {
 						return true;
 					} else {
-						throw new InvalidMoveException();
+						//throw new InvalidMoveException();
+						return false;
 					}
 				} else if (moveType == MoveType.CAPTURE) {
 					if (Math.abs(from.getX() - to.getX()) == 1 && from.getY() - to.getY() == -1) {
 						return true;
 					} else {
-						throw new InvalidMoveException();
+						//throw new InvalidMoveException();
+						return false;
 					}
 				}
 			} else {
@@ -86,14 +93,16 @@ public class MoveValidator {
 							&& (from.getY() - to.getY() == 1 || from.getY() - to.getY() == 2)) {
 						return true;
 					} else {
-						throw new InvalidMoveException();
+						//throw new InvalidMoveException();
+						return false;
 					}
 				}
 				else if (moveType == MoveType.CAPTURE) {
 					if (Math.abs(from.getX() - to.getX()) == 1 && from.getY() - to.getY() == 1) {
 						return true;
 					} else {
-						throw new InvalidMoveException();
+						//throw new InvalidMoveException();
+						return false;
 					}
 				}
 			}

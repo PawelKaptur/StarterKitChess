@@ -74,8 +74,9 @@ public class BoardManager {
 	 * Calculates state of the chess board.
 	 *
 	 * @return state of the chess board
+	 * @throws InvalidMoveException 
 	 */
-	public BoardState updateBoardState() {
+	public BoardState updateBoardState() throws InvalidMoveException {
 
 		Color nextMoveColor = calculateNextMoveColor();
 
@@ -235,69 +236,108 @@ public class BoardManager {
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
 
 		// TODO please add implementation here
-		//zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
-		if(from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7){
+		// zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
+		if (from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7) {
 			throw new InvalidMoveException();
 		}
-		
+
 		Piece piece = board.getPieceAt(from);
-		
-		//sprawdzenie czy to nie jest puste pole
-		if(piece == null){
+
+		// sprawdzenie czy to nie jest puste pole
+		if (piece == null) {
 			throw new InvalidMoveException();
 		}
-		
-		//osobna metoda sprawdzenie czy to jest twoja figura
-		if(!piece.getColor().equals(calculateNextMoveColor())){
+
+		// osobna metoda sprawdzenie czy to jest twoja figura
+		if (!piece.getColor().equals(calculateNextMoveColor())) {
 			throw new InvalidMoveException();
 		}
-		
+
 		MoveValidator moveValidator = new MoveValidator();
 		Move move = new Move();
 		MoveType moveType;
-		
-		//pamietac ze moze byc swoja figura, wtedy powinien wyrzucac blad, sprawdzic w testach
-		if(board.getPieceAt(to) != null){
+
+		// pamietac ze moze byc swoja figura, wtedy powinien wyrzucac blad,
+		// sprawdzic w testach
+		if (board.getPieceAt(to) != null) {
 			moveType = MoveType.CAPTURE;
-		}
-		else{
+		} else {
 			moveType = MoveType.ATTACK;
 		}
-		
+
 		boolean isMoveValid = moveValidator.moveValidation(piece, from, to, moveType);
-		if(isMoveValid){
-			move.setFrom(from);
-			move.setTo(to);
-			move.setMovedPiece(piece);
-			
-			//moze w walidatorze zrobic walidator dla sprawdzenia jaki typ ruchu to bedzie i go zwroci tutaj
-			//dla pionka trzeba zupelnie inaczej
-			//osobny walidator, jeszcze sprawdzac czy to figua przeciwnika
-//			if(board.getPieceAt(to) != null){
-//				move.setType(MoveType.CAPTURE);
-//			}
-//			else{
-//				move.setType(MoveType.ATTACK);
-//			}
-//
-			move.setType(moveType);
+		if (!isMoveValid) {
+			throw new InvalidMoveException();
 		}
-		
-		if(!piece.getType().equals(PieceType.KNIGHT)){
+
+		move.setFrom(from);
+		move.setTo(to);
+		move.setMovedPiece(piece);
+
+		// moze w walidatorze zrobic walidator dla sprawdzenia jaki typ ruchu to
+		// bedzie i go zwroci tutaj
+		// dla pionka trzeba zupelnie inaczej
+		// osobny walidator, jeszcze sprawdzac czy to figua przeciwnika
+		// if(board.getPieceAt(to) != null){
+		// move.setType(MoveType.CAPTURE);
+		// }
+		// else{
+		// move.setType(MoveType.ATTACK);
+		// }
+		//
+		move.setType(moveType);
+
+		if (!piece.getType().equals(PieceType.KNIGHT)) {
 			moveValidator.EmptyRoad(from, to, board);
 		}
-		
+
 		Color nextMoveColor = calculateNextMoveColor();
+
+		// sprawdzic czy krol jest szachowany
+		if(isKingInCheck(nextMoveColor)){
+			throw new KingInCheckException();
+		}
 		
-		isKingInCheck(nextMoveColor);
-		//sprawdzic czy krol jest szachowany
 		
+
 		return move;
 	}
 
-	private boolean isKingInCheck(Color kingColor) {
+	private boolean isKingInCheck(Color kingColor) throws InvalidMoveException {
+		Coordinate kingCoordinate = new Coordinate(0, 0);
 
-		// TODO please add implementation here
+		// jakos to przerobic
+		outer: for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				Piece piece = board.getPieceAt(coordinate);
+				if (piece != null) {
+					if (piece.getType().equals(PieceType.KING) && piece.getColor().equals(kingColor)) {
+						kingCoordinate = coordinate;
+						break outer;
+					}
+				}
+			}
+		}
+		MoveValidator moveValidator = new MoveValidator();
+
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				Piece piece = board.getPieceAt(coordinate);
+				if (piece != null) {
+					// while (piece.getType().equals(PieceType.KING) &&
+					// piece.getColor().equals(kingColor))
+					if (piece.getColor() != kingColor) {
+						if(moveValidator.moveValidation(piece, coordinate, kingCoordinate, MoveType.CAPTURE)){
+							//throw new KingInCheckException();
+							return true;
+						}
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 
