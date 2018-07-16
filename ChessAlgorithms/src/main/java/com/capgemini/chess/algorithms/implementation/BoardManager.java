@@ -256,6 +256,7 @@ public class BoardManager {
 		Move move = new Move();
 		MoveType moveType;
 		
+		//pamietac ze moze byc swoja figura, wtedy powinien wyrzucac blad, sprawdzic w testach
 		if(board.getPieceAt(to) != null){
 			moveType = MoveType.CAPTURE;
 		}
@@ -286,8 +287,9 @@ public class BoardManager {
 			moveValidator.EmptyRoad(from, to, board);
 		}
 		
+		Color nextMoveColor = calculateNextMoveColor();
 		
-		isKingInCheck(null);
+		isKingInCheck(nextMoveColor);
 		//sprawdzic czy krol jest szachowany
 		
 		return move;
