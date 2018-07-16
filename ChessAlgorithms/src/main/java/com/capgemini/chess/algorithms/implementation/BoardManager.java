@@ -242,13 +242,22 @@ public class BoardManager {
 		
 		
 		Piece piece = board.getPieceAt(from);
-		MoveValidator moveValidator = new MoveValidator();
-		Move move = new Move();
 		
 		//sprawdzenie czy to nie jest puste pole
 		if(piece == null){
 			throw new InvalidMoveException();
 		}
+		
+		//osobna metoda sprawdzenie czy to jest twoja figura
+		if(!piece.getColor().equals(calculateNextMoveColor())){
+			throw new InvalidMoveException();
+		}
+		
+		MoveValidator moveValidator = new MoveValidator();
+		Move move = new Move();
+		
+		
+
 		
 		boolean isMoveValid = moveValidator.moveValidation(piece, from, to);
 		if(isMoveValid){
