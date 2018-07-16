@@ -160,7 +160,55 @@ public class MoveValidator {
 			
 		}
 		
-		return false;
+		//ruchy w poziomie
+		if(fromX != toX && changeY == 0){
+			int change = Math.abs(from.getX() - to.getX());
+			//ruch na prawo
+			if(fromX < toX){
+				for(int x = fromX + 1; x < toX; x++){
+					Coordinate coordinate = new Coordinate(x, toY);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+			//ruch na lewo
+			if(fromX > toX){
+				for(int x = fromX - 1; x > toX; x--){
+					Coordinate coordinate = new Coordinate(x, toY);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+		}
+		
+		//ruchy w pionie
+		if(changeX == 0 && fromY != toY){
+			int change = Math.abs(from.getY() - to.getY());
+			//ruch w gore
+			if(fromY < toY){
+				for(int y = fromY + 1; y < toY; y++){
+					Coordinate coordinate = new Coordinate(toX, y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+			//ruch na dol
+			if(fromY > toY){
+				for(int y = fromY - 1; y > toY; y--){
+					Coordinate coordinate = new Coordinate(toX, y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 
 }
