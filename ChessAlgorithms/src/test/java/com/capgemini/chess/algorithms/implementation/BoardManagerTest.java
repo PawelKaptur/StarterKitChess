@@ -838,6 +838,7 @@ public class BoardManagerTest {
 		assertFalse(areFiftyMoves);
 	}
 	
+	
 	private Move createDummyMove(Board board) {
 		
 		Move move = new Move();

@@ -255,7 +255,16 @@ public class BoardManager {
 			move.setFrom(from);
 			move.setTo(to);
 			move.setMovedPiece(piece);
-			move.setType(MoveType.ATTACK);
+			
+			//moze w walidatorze zrobic walidator dla sprawdzenia jaki typ ruchu to bedzie i go zwroci tutaj
+			//dla pionka trzeba zupelnie inaczej
+			//osobny walidator, jeszcze sprawdzac czy to figua przeciwnika
+			if(board.getPieceAt(to) != null){
+				move.setType(MoveType.CAPTURE);
+			}
+			else{
+				move.setType(MoveType.ATTACK);
+			}
 		}
 		
 		//sprawdzic czy krol jest szachowany
