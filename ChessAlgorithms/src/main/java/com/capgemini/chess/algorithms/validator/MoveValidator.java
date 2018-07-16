@@ -1,6 +1,7 @@
 package com.capgemini.chess.algorithms.validator;
 
 import com.capgemini.chess.algorithms.data.Coordinate;
+import com.capgemini.chess.algorithms.data.enums.Color;
 import com.capgemini.chess.algorithms.data.enums.Piece;
 import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
@@ -63,14 +64,30 @@ public class MoveValidator {
 				throw new InvalidMoveException();
 			}
 		case PAWN:
-			if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getX() - to.getX()) == 0) {
-				return true;
+			if(piece.getColor().equals(Color.WHITE)){
+				if (Math.abs(from.getX() - to.getX()) == 0 && from.getY() - to.getY() == -1) {
+					return true;
+				}
+				else if(from.getY() == 1 && from.getX() - to.getX() == 0 && (from.getY() - to.getY() == -1 || from.getY() - to.getY() == -2)){
+					return true;
+				}
+				else{
+					throw new InvalidMoveException();
+				}
 			}
 			else{
-				throw new InvalidMoveException();
+				if(Math.abs(from.getX() - to.getX()) == 0 && from.getY() - to.getY() == 1){
+					return true;
+				}
+				else if(from.getY() == 6 && from.getX() - to.getX() == 0 && (from.getY() - to.getY() == 1 || from.getY() - to.getY() == 2)){
+					return true;
+				}
+				else{
+					throw new InvalidMoveException();
+				}
 			}
 		default:
-			return false;
+			throw new InvalidMoveException();
 		}
 //		if (piece.getType().equals(PieceType.KNIGHT)) {
 //			if (from.getX() - to.getX() == Math.abs(1) && from.getX() - to.getX() == Math.abs(2)) {

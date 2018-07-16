@@ -235,11 +235,21 @@ public class BoardManager {
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
 
 		// TODO please add implementation here
+		//zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
+		if(from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7 ){
+			throw new InvalidMoveException();
+		}
+		
+		
 		Piece piece = board.getPieceAt(from);
 		MoveValidator moveValidator = new MoveValidator();
 		Move move = new Move();
 		
-		//moze ta metoda bedzie zwracac move
+		//sprawdzenie czy to nie jest puste pole
+		if(piece == null){
+			throw new InvalidMoveException();
+		}
+		
 		boolean isMoveValid = moveValidator.moveValidation(piece, from, to);
 		if(isMoveValid){
 			move.setFrom(from);
@@ -247,6 +257,8 @@ public class BoardManager {
 			move.setMovedPiece(piece);
 			move.setType(MoveType.ATTACK);
 		}
+		
+		//sprawdzic czy krol jest szachowany
 		
 		return move;
 	}
