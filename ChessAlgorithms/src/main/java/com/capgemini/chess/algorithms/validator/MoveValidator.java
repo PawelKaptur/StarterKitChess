@@ -107,7 +107,8 @@ public class MoveValidator {
 				}
 			}
 		default:
-			throw new InvalidMoveException();
+			//throw new InvalidMoveException();
+			return false;
 		}
 		// if (piece.getType().equals(PieceType.KNIGHT)) {
 		// if (from.getX() - to.getX() == Math.abs(1) && from.getX() - to.getX()

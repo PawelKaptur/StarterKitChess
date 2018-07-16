@@ -74,7 +74,7 @@ public class BoardManager {
 	 * Calculates state of the chess board.
 	 *
 	 * @return state of the chess board
-	 * @throws InvalidMoveException 
+	 * @throws InvalidMoveException
 	 */
 	public BoardState updateBoardState() throws InvalidMoveException {
 
@@ -248,6 +248,7 @@ public class BoardManager {
 			throw new InvalidMoveException();
 		}
 
+		Color nextMoveColor = calculateNextMoveColor();
 		// osobna metoda sprawdzenie czy to jest twoja figura
 		if (!piece.getColor().equals(calculateNextMoveColor())) {
 			throw new InvalidMoveException();
@@ -259,7 +260,7 @@ public class BoardManager {
 
 		// pamietac ze moze byc swoja figura, wtedy powinien wyrzucac blad,
 		// sprawdzic w testach
-		if (board.getPieceAt(to) != null) {
+		if (board.getPieceAt(to) != null && board.getPieceAt(to).getColor() != nextMoveColor) {
 			moveType = MoveType.CAPTURE;
 		} else {
 			moveType = MoveType.ATTACK;
@@ -291,19 +292,17 @@ public class BoardManager {
 			moveValidator.EmptyRoad(from, to, board);
 		}
 
-		Color nextMoveColor = calculateNextMoveColor();
-
 		// sprawdzic czy krol jest szachowany
-		if(isKingInCheck(nextMoveColor)){
+		if (isKingInCheck(nextMoveColor)) {
 			throw new KingInCheckException();
 		}
-		
-		
 
 		return move;
 	}
 
 	private boolean isKingInCheck(Color kingColor) throws InvalidMoveException {
+		// TODO please add implementation here
+
 		Coordinate kingCoordinate = new Coordinate(0, 0);
 
 		// jakos to przerobic
@@ -326,11 +325,8 @@ public class BoardManager {
 				Coordinate coordinate = new Coordinate(x, y);
 				Piece piece = board.getPieceAt(coordinate);
 				if (piece != null) {
-					// while (piece.getType().equals(PieceType.KING) &&
-					// piece.getColor().equals(kingColor))
 					if (piece.getColor() != kingColor) {
-						if(moveValidator.moveValidation(piece, coordinate, kingCoordinate, MoveType.CAPTURE)){
-							//throw new KingInCheckException();
+						if (moveValidator.moveValidation(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
 							return true;
 						}
 					}
@@ -341,11 +337,29 @@ public class BoardManager {
 		return false;
 	}
 
-	private boolean isAnyMoveValid(Color nextMoveColor) {
+	private boolean isAnyMoveValid(Color nextMoveColor) throws InvalidMoveException {
 
 		// TODO please add implementation here
+		MoveValidator moveValidator = new MoveValidator();
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				Piece piece = board.getPieceAt(coordinate);
+				if (piece != null && piece.getColor() == nextMoveColor) {
+					for (int i = 0; i < 8; i++) {
+						for (int j = 0; j < 8; j++) {
+							Coordinate coordinateTo = new Coordinate(x, y);
+							if (moveValidator.moveValidation(piece, coordinate, coordinateTo, MoveType.ATTACK)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
 
 		return false;
+
 	}
 
 	private Color calculateNextMoveColor() {
