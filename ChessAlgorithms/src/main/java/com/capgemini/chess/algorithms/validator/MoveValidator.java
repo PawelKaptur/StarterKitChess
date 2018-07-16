@@ -2,13 +2,17 @@ package com.capgemini.chess.algorithms.validator;
 
 import com.capgemini.chess.algorithms.data.Coordinate;
 import com.capgemini.chess.algorithms.data.enums.Color;
+import com.capgemini.chess.algorithms.data.enums.MoveType;
 import com.capgemini.chess.algorithms.data.enums.Piece;
 import com.capgemini.chess.algorithms.data.enums.PieceType;
+import com.capgemini.chess.algorithms.data.generated.Board;
+import com.capgemini.chess.algorithms.implementation.BoardManager;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 
 public class MoveValidator {
 
-	public boolean moveValidation(Piece piece, Coordinate from, Coordinate to) throws InvalidMoveException {
+	//ta metoda bedzie sprawdyala kilka innych metod, a mozliwosci ruchu przeniose
+	public boolean moveValidation(Piece piece, Coordinate from, Coordinate to, MoveType moveType) throws InvalidMoveException {
 		PieceType pieceType = piece.getType();
 		
 		switch (pieceType) {
@@ -98,6 +102,65 @@ public class MoveValidator {
 //				return false;
 //			}
 //		}
+	}
+	
+	
+	public boolean EmptyRoad(Coordinate from, Coordinate to, Board board) throws InvalidMoveException{
+		int fromX = from.getX();
+		int fromY = from.getY();
+		int toX = to.getX();
+		int toY = to.getY();
+		int changeX = Math.abs(fromX - toX);
+		int changeY = Math.abs(fromY - toY);
+		Piece piece = null;
+		
+		//ruchy na skos
+		if(fromX != toX && fromY != toY){
+			int change = Math.abs(from.getX() - to.getX());
+			//ruch na skos prawo-gora
+			if(fromX < toX && fromY < toY){
+				for(int x = fromX + 1, y = fromY + 1; x < toX && y < toY; x++, y++){
+					Coordinate coordinate = new Coordinate(x, y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+			//ruch na skos prawo-dol
+			if(fromX < toX && fromY > toY){
+				for(int x = fromX + 1, y = fromY - 1; x < toX && y > toY; x++, y--){
+					Coordinate coordinate = new Coordinate(x, y);
+					//System.out.println("x: " + x + " y: " + y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+			//ruch na skos lewo-dol
+			if(fromX > toX && fromY > toY){
+				for(int x = fromX - 1, y = fromY - 1; x > toX && y > toY; x--, y--){
+					Coordinate coordinate = new Coordinate(x, y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+			//ruch na skos lewo-gora
+			if(fromX > toX && fromY < toY){
+				for(int x = fromX - 1, y = fromY + 1; x > toX && y < toY; x--, y++){
+					Coordinate coordinate = new Coordinate(x, y);
+					if(board.getPieceAt(coordinate) != null){
+						throw new InvalidMoveException();
+					}
+				}
+			}
+			
+		}
+		
+		return false;
 	}
 
 }

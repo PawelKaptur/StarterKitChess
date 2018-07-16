@@ -236,10 +236,9 @@ public class BoardManager {
 
 		// TODO please add implementation here
 		//zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
-		if(from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7 ){
+		if(from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7){
 			throw new InvalidMoveException();
 		}
-		
 		
 		Piece piece = board.getPieceAt(from);
 		
@@ -255,11 +254,16 @@ public class BoardManager {
 		
 		MoveValidator moveValidator = new MoveValidator();
 		Move move = new Move();
+		MoveType moveType;
 		
+		if(board.getPieceAt(to) != null){
+			moveType = MoveType.CAPTURE;
+		}
+		else{
+			moveType = MoveType.ATTACK;
+		}
 		
-
-		
-		boolean isMoveValid = moveValidator.moveValidation(piece, from, to);
+		boolean isMoveValid = moveValidator.moveValidation(piece, from, to, moveType);
 		if(isMoveValid){
 			move.setFrom(from);
 			move.setTo(to);
@@ -268,14 +272,22 @@ public class BoardManager {
 			//moze w walidatorze zrobic walidator dla sprawdzenia jaki typ ruchu to bedzie i go zwroci tutaj
 			//dla pionka trzeba zupelnie inaczej
 			//osobny walidator, jeszcze sprawdzac czy to figua przeciwnika
-			if(board.getPieceAt(to) != null){
-				move.setType(MoveType.CAPTURE);
-			}
-			else{
-				move.setType(MoveType.ATTACK);
-			}
+//			if(board.getPieceAt(to) != null){
+//				move.setType(MoveType.CAPTURE);
+//			}
+//			else{
+//				move.setType(MoveType.ATTACK);
+//			}
+//
+			move.setType(moveType);
 		}
 		
+		if(!piece.getType().equals(PieceType.KNIGHT)){
+			moveValidator.EmptyRoad(from, to, board);
+		}
+		
+		
+		isKingInCheck(null);
 		//sprawdzic czy krol jest szachowany
 		
 		return move;
