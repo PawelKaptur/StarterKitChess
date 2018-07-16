@@ -21,10 +21,10 @@ public class MoveValidator {
 				throw new InvalidMoveException();
 			}
 		case ROOK:
-			if(from.getX() - to.getX() == 0 && Math.abs(from.getY() - to.getY()) > 0){
+			if(Math.abs(from.getX() - to.getX()) == 0 && Math.abs(from.getY() - to.getY()) > 0){
 				return true;
 			}
-			else if(from.getX() - to.getX() > 0 && Math.abs(from.getY() - to.getY()) ==  0){
+			else if(Math.abs(from.getX() - to.getX()) > 0 && Math.abs(from.getY() - to.getY()) ==  0){
 				return true;
 			}
 			else{
