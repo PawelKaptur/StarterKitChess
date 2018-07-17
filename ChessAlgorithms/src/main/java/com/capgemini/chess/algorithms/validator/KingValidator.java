@@ -8,11 +8,14 @@ public class KingValidator extends AbstractMoveValidator {
 
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
-		if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 1) {
+		int changeX = Math.abs(from.getX() - to.getX());
+		int changeY = Math.abs(from.getY() - to.getY());
+		
+		if (changeX == 1 && changeY == 1) {
 			return true;
-		} else if (Math.abs(from.getX() - to.getX()) == 0 && Math.abs(from.getY() - to.getY()) == 1) {
+		} else if (changeX == 0 && changeY == 1) {
 			return true;
-		} else if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 0) {
+		} else if (changeX == 1 && changeY == 0) {
 			return true;
 		}
 		

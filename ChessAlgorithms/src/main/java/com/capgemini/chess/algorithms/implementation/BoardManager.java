@@ -247,7 +247,11 @@ public class BoardManager {
 		}
 
 		Piece piece = board.getPieceAt(from);
-
+		Color colorOfDestinationPiece = null;
+		if(board.getPieceAt(to) != null){
+			colorOfDestinationPiece = board.getPieceAt(to).getColor();
+		}
+		
 		// sprawdzenie czy to nie jest puste pole
 		if (piece == null) {
 			throw new InvalidMoveException();
@@ -256,6 +260,11 @@ public class BoardManager {
 		Color nextMoveColor = calculateNextMoveColor();
 		// osobna metoda sprawdzenie czy to jest twoja figura
 		if (!piece.getColor().equals(calculateNextMoveColor())) {
+			throw new InvalidMoveException();
+		}
+		
+		//sprawdzenie czy nie atakujesz swojej figury
+		if(colorOfDestinationPiece != null && colorOfDestinationPiece.equals(nextMoveColor)){
 			throw new InvalidMoveException();
 		}
 
@@ -368,9 +377,7 @@ public class BoardManager {
 				}
 			}
 		}
-
 		return false;
-
 	}
 
 	private Color calculateNextMoveColor() {

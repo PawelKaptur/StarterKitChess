@@ -9,34 +9,40 @@ public class PawnValidator extends AbstractMoveValidator {
 
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
+		int changeX = Math.abs(from.getX() - to.getX());
+		int changeY = from.getY() - to.getY();
+
+		int startingYPositionOfWhitePawn = 1;
+		int startingYPostitionOfBlackPawn = 6;
+
 		if (piece.getColor().equals(Color.WHITE)) {
 			if (moveType == MoveType.ATTACK) {
-				if (Math.abs(from.getX() - to.getX()) == 0 && from.getY() - to.getY() == -1) {
+				if (changeX == 0 && changeY == -1) {
 					return true;
-				} else if (from.getY() == 1 && from.getX() - to.getX() == 0
-						&& (from.getY() - to.getY() == -1 || from.getY() - to.getY() == -2)) {
+				} else if (from.getY() == startingYPositionOfWhitePawn && changeX == 0
+						&& (changeY == -1 || changeY == -2)) {
 					return true;
 				}
 				return false;
 
 			} else if (moveType == MoveType.CAPTURE) {
-				if (Math.abs(from.getX() - to.getX()) == 1 && from.getY() - to.getY() == -1) {
+				if (changeX == 1 && changeY == -1) {
 					return true;
 				}
 				return false;
 			}
 		} else {
 			if (moveType == MoveType.ATTACK) {
-				if (Math.abs(from.getX() - to.getX()) == 0 && from.getY() - to.getY() == 1) {
+				if (changeX == 0 && changeY == 1) {
 					return true;
-				} else if (from.getY() == 6 && from.getX() - to.getX() == 0
-						&& (from.getY() - to.getY() == 1 || from.getY() - to.getY() == 2)) {
+				} else if (from.getY() == startingYPostitionOfBlackPawn && changeX == 0
+						&& (changeY == 1 || changeY == 2)) {
 					return true;
 				}
 				return false;
 
 			} else if (moveType == MoveType.CAPTURE) {
-				if (Math.abs(from.getX() - to.getX()) == 1 && from.getY() - to.getY() == 1) {
+				if (changeX == 1 && changeY == 1) {
 					return true;
 				}
 				return false;

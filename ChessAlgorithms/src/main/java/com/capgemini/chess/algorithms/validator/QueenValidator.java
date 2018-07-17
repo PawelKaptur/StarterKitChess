@@ -5,14 +5,18 @@ import com.capgemini.chess.algorithms.data.enums.MoveType;
 import com.capgemini.chess.algorithms.data.enums.Piece;
 
 public class QueenValidator extends AbstractMoveValidator {
+	//zobaczyc czy nie uzywac tutaj validatora dla wiezy i gonca
 
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
-		if (from.getX() - to.getX() == 0 && Math.abs(from.getY() - to.getY()) > 0) {
+		int changeX = Math.abs(from.getX() - to.getX());
+		int changeY = Math.abs(from.getY() - to.getY());
+		
+		if (changeX == 0 && changeY > 0) {
 			return true;
-		} else if (from.getX() - to.getX() > 0 && Math.abs(from.getY() - to.getY()) == 0) {
+		} else if (changeX > 0 && changeY == 0) {
 			return true;
-		} else if (Math.abs(from.getX() - to.getX()) == Math.abs(from.getY() - to.getY())) {
+		} else if (changeX == changeY) {
 			return true;
 		}
 		return false;

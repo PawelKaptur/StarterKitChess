@@ -8,11 +8,12 @@ public class KnightValidator extends AbstractMoveValidator {
 
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
-		//porobic na poczatku zmienne i wrzucic te from.get() itd dla przejrzystosci
+		int changeX = Math.abs(from.getX() - to.getX());
+		int changeY = Math.abs(from.getY() - to.getY());
 		
-		if (Math.abs(from.getX() - to.getX()) == 1 && Math.abs(from.getY() - to.getY()) == 2) {
+		if (changeX == 1 && changeY == 2) {
 			return true;
-		} else if (Math.abs(from.getX() - to.getX()) == 2 && Math.abs(from.getX() - to.getX()) == 1) {
+		} else if (changeX == 2 && changeY == 1) {
 			return true;
 		}
 		
