@@ -20,7 +20,7 @@ public abstract class AbstractMoveValidator {
 		int toY = to.getY();
 		int changeX = Math.abs(fromX - toX);
 		int changeY = Math.abs(fromY - toY);
-		Piece piece = null;
+		
 
 		// int changeOfX = from.getX() - to.getX();
 
@@ -94,6 +94,7 @@ public abstract class AbstractMoveValidator {
 				}
 			}
 		}
+		
 		return true;
 	}
 }
