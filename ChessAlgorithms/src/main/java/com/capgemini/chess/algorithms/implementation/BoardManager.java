@@ -345,12 +345,27 @@ public class BoardManager {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinate = new Coordinate(x, y);
 				Piece piece = board.getPieceAt(coordinate);
-				if (piece != null && piece.getColor() == nextMoveColor) {
+				if (piece != null && piece.getColor().equals(nextMoveColor)) {
 					for (int i = 0; i < 8; i++) {
 						for (int j = 0; j < 8; j++) {
-							Coordinate coordinateTo = new Coordinate(x, y);
+							Coordinate coordinateTo = new Coordinate(i, j);
 							if (moveValidator.moveValidation(piece, coordinate, coordinateTo, MoveType.ATTACK)) {
-								return true;
+								if(piece.getType().equals(PieceType.KING)){
+									for(int a = 0; a < 8; a++){
+										for(int b = 0; b < 8; b++){
+											coordinate = new Coordinate(a, b);
+											if(board.getPieceAt(coordinate) != null && !board.getPieceAt(coordinate).getColor().equals(nextMoveColor)){
+												piece = board.getPieceAt(coordinate);
+												if(moveValidator.moveValidation(piece, coordinate, coordinateTo, MoveType.CAPTURE)){
+													return false;
+												}
+											}
+										}
+									}
+								}
+								else {
+									return true;
+								}
 							}
 						}
 					}
