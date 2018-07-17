@@ -13,9 +13,8 @@ public class KingValidator extends AbstractMoveValidator {
 		
 		if (changeX == 1 && changeY == 1) {
 			return true;
-		} else if (changeX == 0 && changeY == 1) {
-			return true;
-		} else if (changeX == 1 && changeY == 0) {
+		} 
+		else if(changeX + changeY == 1){
 			return true;
 		}
 		
