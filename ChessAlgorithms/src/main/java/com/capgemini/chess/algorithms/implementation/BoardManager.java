@@ -341,7 +341,6 @@ public class BoardManager {
 	private boolean isAnyMoveValid(Color nextMoveColor) throws InvalidMoveException {
 
 		// TODO please add implementation here
-		Context context = null;
 		Map<Coordinate, Piece> ourPieces;
 		Map<Coordinate, Piece> opponentPieces;
 		if (nextMoveColor.equals(Color.WHITE)) {
@@ -352,114 +351,8 @@ public class BoardManager {
 			opponentPieces = whitePieces;
 		}
 		
-		for (Map.Entry<Coordinate, Piece> entry : ourPieces.entrySet()) {
-			Coordinate coordinateFrom = entry.getKey();
-			Piece piece = entry.getValue();
-			context = returningContext(piece);
-			// sprawdzenie czy nasze figury moga isc na jakiekolwiek pole
-			for (int x = 0; x < 8; x++) {
-				for (int y = 0; y < 8; y++) {
-					Coordinate coordinateTo = new Coordinate(x, y);
-					// tu sprawdzanie czy moze isc na koordynaty,
-					// wypadaloy chyba jeszcze sprawdzic tutaj czy droga
-					// wolna
-					if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.ATTACK)) {
-						// jesli figura jest krolem to trzeba sprawdzic
-						// czy nie ma szacha
-						if (piece.getType().equals(PieceType.KING)) {
-							for (Map.Entry<Coordinate, Piece> opponentEntry : opponentPieces.entrySet()) {
-								coordinateFrom = opponentEntry.getKey();
-								piece = opponentEntry.getValue();
-								context = returningContext(piece);
-								// // jesli moze sie ruszyc tam obca figura
-								// to krol nie moze, trzeba by bylo usuwac
-								// krola z terazniejszej pozycji zeby bylo
-								// wiarygodne
-								if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo,
-										MoveType.CAPTURE)) {
-									return false;
-								}
-							}
-						}
-						// jesli figura nie jest krolem to moze tam isc
-						// bez problemu, jeszcze przydaloby sie
-						// sprawdzic czy nie odslania taki ruch krola
-						else {
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
+		return checkIsAnyMoveValid(ourPieces, opponentPieces);
 	}
-
-	// Coordinate coordinate = new Coordinate(x, y);
-	// Piece piece = board.getPieceAt(coordinate);
-	// if (piece != null && piece.getColor().equals(nextMoveColor)) {
-	// context = returningContext(piece);
-
-	// private boolean isAnyMoveValid(Color nextMoveColor) throws
-	// InvalidMoveException {
-	//
-	// // TODO please add implementation here
-	// Context context = null;
-	// // szukanie figur
-	// for (int x = 0; x < 8; x++) {
-	// for (int y = 0; y < 8; y++) {
-	// Coordinate coordinate = new Coordinate(x, y);
-	// Piece piece = board.getPieceAt(coordinate);
-	// if (piece != null && piece.getColor().equals(nextMoveColor)) {
-	// context = returningContext(piece);
-	// // gdy znaleziono nasza figure to podajemy wpolrzedne po
-	// // kolei i czy moze sie tam ruszyc
-	// for (int i = 0; i < 8; i++) {
-	// for (int j = 0; j < 8; j++) {
-	// Coordinate coordinateTo = new Coordinate(i, j);
-	// // tu sprawdzanie czy moze isc na koordynaty,
-	// // wypadaloy chyba jeszcze sprawdzic tutaj czy droga
-	// // wolna
-	// if (context.checkIfPieceCanMoveTo(piece, coordinate, coordinateTo,
-	// MoveType.ATTACK)) {
-	// // jesli figura jest krolem to trzeba sprawdzic
-	// // czy nie ma szacha
-	// if (piece.getType().equals(PieceType.KING)) {
-	// for (int a = 0; a < 8; a++) {
-	// for (int b = 0; b < 8; b++) {
-	// coordinate = new Coordinate(a, b);
-	// // tutaj sprawdzam czy pionek jest
-	// // wrogi, bo taki chce
-	// if (board.getPieceAt(coordinate) != null
-	// && !board.getPieceAt(coordinate).getColor().equals(nextMoveColor)) {
-	// piece = board.getPieceAt(coordinate);
-	// context = returningContext(piece);
-	// // jesli moze sie ruszyc tam
-	// // obca figura to krol nie moze,
-	// // trzeba by bylo usuwac krola z
-	// // terazniejszej pozycji zeby
-	// // bylo wiarygodne
-	// if (context.checkIfPieceCanMoveTo(piece, coordinate, coordinateTo,
-	// MoveType.CAPTURE)) {
-	// return false;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// // jesli figura nie jest krolem to moze tam isc
-	// // bez problemu, jeszcze przydaloby sie
-	// // sprawdzic czy nie odslania taki ruch krola
-	// else {
-	// return true;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	// }
-	// return false;
-	// }
 
 	private Color calculateNextMoveColor() {
 		if (this.board.getMoveHistory().size() % 2 == 0) {
@@ -530,6 +423,7 @@ public class BoardManager {
 		}
 	}
 
+	//2 nastpene metody pewnie mozna jakos yuniwersaliyowac
 	private boolean checkingIsWhiteKingInCheck(Coordinate kingCoordinate) {
 		Context context = null;
 		for (Map.Entry<Coordinate, Piece> entry : blackPieces.entrySet()) {
@@ -555,6 +449,63 @@ public class BoardManager {
 		}
 		return false;
 	}
+	
+	private boolean checkIsAnyMoveValid(Map<Coordinate, Piece> ourPieces, Map<Coordinate, Piece> opponentPieces) {
+		Context context = null;
+		boolean pieceCanGoSomewhereOnBoard = false;
+		for (Map.Entry<Coordinate, Piece> entry : ourPieces.entrySet()) {
+			Coordinate coordinateFrom = entry.getKey();
+			Piece piece = entry.getValue();
+			context = returningContext(piece);
+			pieceCanGoSomewhereOnBoard = canPiecesGoSomewhereOnBoard(context, coordinateFrom, piece, opponentPieces);
+			if(pieceCanGoSomewhereOnBoard){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	//to jeszcze rozbic
+	private boolean canPiecesGoSomewhereOnBoard(Context context, Coordinate coordinateFrom, Piece piece, Map<Coordinate, Piece> opponentPieces){
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				Coordinate coordinateTo = new Coordinate(x, y);
+				// tu sprawdzanie czy moze isc na koordynaty,
+				// wypadaloy chyba jeszcze sprawdzic tutaj czy droga
+				// wolna
+				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.ATTACK)) {
+					// jesli figura jest krolem to trzeba sprawdzic
+					// czy nie ma szacha
+					if (piece.getType().equals(PieceType.KING)) {
+						for (Map.Entry<Coordinate, Piece> opponentEntry : opponentPieces.entrySet()) {
+							coordinateFrom = opponentEntry.getKey();
+							piece = opponentEntry.getValue();
+							context = returningContext(piece);
+							// // jesli moze sie ruszyc tam obca figura
+							// to krol nie moze, trzeba by bylo usuwac
+							// krola z terazniejszej pozycji zeby bylo
+							// wiarygodne
+							if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo,
+									MoveType.CAPTURE)) {
+								return false;
+							}
+						}
+					}
+					// jesli figura nie jest krolem to moze tam isc
+					// bez problemu, jeszcze przydaloby sie
+					// sprawdzic czy nie odslania taki ruch krola
+					else {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+//	public boolean isKingInCheck(){
+//
+//	}
 
 	public static <T, E> Coordinate getCoordinatesByKing(Map<T, E> map, E value) {
 		for (Entry<T, E> entry : map.entrySet()) {
@@ -564,5 +515,4 @@ public class BoardManager {
 		}
 		return null;
 	}
-
 }
