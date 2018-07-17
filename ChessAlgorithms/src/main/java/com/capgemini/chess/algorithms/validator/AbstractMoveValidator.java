@@ -8,10 +8,12 @@ import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveExcep
 
 public abstract class AbstractMoveValidator {
 
-	//Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to tylko dla pionka zrobione, piece tez dla pionka
+	// Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to
+	// tylko dla pionka zrobione, piece tez dla pionka
 	public abstract boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType);
-	
-	public boolean checkIfRoadToPieceDestinationIsEmpty(Coordinate from, Coordinate to, Board board) throws InvalidMoveException{
+
+	public boolean checkIfRoadToPieceDestinationIsEmpty(Coordinate from, Coordinate to, Board board)
+			throws InvalidMoveException {
 		int fromX = from.getX();
 		int fromY = from.getY();
 		int toX = to.getX();
@@ -19,6 +21,8 @@ public abstract class AbstractMoveValidator {
 		int changeX = Math.abs(fromX - toX);
 		int changeY = Math.abs(fromY - toY);
 		Piece piece = null;
+
+		// int changeOfX = from.getX() - to.getX();
 
 		// ruchy na skos
 		if (fromX != toX && fromY != toY) {
@@ -37,7 +41,6 @@ public abstract class AbstractMoveValidator {
 			if (fromX < toX && fromY > toY) {
 				for (int x = fromX + 1, y = fromY - 1; x < toX && y > toY; x++, y--) {
 					Coordinate coordinate = new Coordinate(x, y);
-					// System.out.println("x: " + x + " y: " + y);
 					if (board.getPieceAt(coordinate) != null) {
 						throw new InvalidMoveException();
 					}
@@ -66,54 +69,31 @@ public abstract class AbstractMoveValidator {
 
 		}
 
-		// ruchy w poziomie
+		// ruch w poziomie
 		if (fromX != toX && changeY == 0) {
-			int change = Math.abs(from.getX() - to.getX());
-			// ruch na prawo
-			if (fromX < toX) {
-				for (int x = fromX + 1; x < toX; x++) {
-					Coordinate coordinate = new Coordinate(x, toY);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
+			int changeOfX = from.getX() - to.getX();
+			int change = changeOfX > 0 ? -1 : 1;
 
-			// ruch na lewo
-			if (fromX > toX) {
-				for (int x = fromX - 1; x > toX; x--) {
-					Coordinate coordinate = new Coordinate(x, toY);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
+			for (int x = fromX + change; x != toX; x = x + change) {
+				Coordinate coordinate = new Coordinate(x, toY);
+				if (board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
 				}
 			}
 		}
 
-		// ruchy w pionie
+		// ruch w pionie
 		if (changeX == 0 && fromY != toY) {
-			int change = Math.abs(from.getY() - to.getY());
-			// ruch w gore
-			if (fromY < toY) {
-				for (int y = fromY + 1; y < toY; y++) {
-					Coordinate coordinate = new Coordinate(toX, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
+			int changeOfY = from.getY() - to.getY();
+			int change = changeOfY > 0 ? -1 : 1;
 
-			// ruch na dol
-			if (fromY > toY) {
-				for (int y = fromY - 1; y > toY; y--) {
-					Coordinate coordinate = new Coordinate(toX, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
+			for (int y = fromY + change; y != toY; y = y + change) {
+				Coordinate coordinate = new Coordinate(toX, y);
+				if (board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
 				}
 			}
 		}
-
 		return true;
 	}
 }
