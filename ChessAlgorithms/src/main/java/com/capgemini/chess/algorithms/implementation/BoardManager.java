@@ -13,7 +13,13 @@ import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
-import com.capgemini.chess.algorithms.validator.MoveValidator;
+import com.capgemini.chess.algorithms.validator.BishopValidator;
+import com.capgemini.chess.algorithms.validator.Context;
+import com.capgemini.chess.algorithms.validator.KingValidator;
+import com.capgemini.chess.algorithms.validator.KnightValidator;
+import com.capgemini.chess.algorithms.validator.PawnValidator;
+import com.capgemini.chess.algorithms.validator.QueenValidator;
+import com.capgemini.chess.algorithms.validator.RookValidator;
 
 /**
  * Class for managing of basic operations on the Chess Board.
@@ -234,7 +240,6 @@ public class BoardManager {
 	}
 
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
-
 		// TODO please add implementation here
 		// zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
 		if (from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7) {
@@ -254,42 +259,29 @@ public class BoardManager {
 			throw new InvalidMoveException();
 		}
 
-		MoveValidator moveValidator = new MoveValidator();
-		Move move = new Move();
+		//dopisac jeszcze zeby nie dalo sie zbic krola i to przetestowac
+		
 		MoveType moveType;
-
-		// pamietac ze moze byc swoja figura, wtedy powinien wyrzucac blad,
-		// sprawdzic w testach
 		if (board.getPieceAt(to) != null && board.getPieceAt(to).getColor() != nextMoveColor) {
 			moveType = MoveType.CAPTURE;
 		} else {
 			moveType = MoveType.ATTACK;
 		}
 
-		boolean isMoveValid = moveValidator.moveValidation(piece, from, to, moveType);
-		if (!isMoveValid) {
+		Context context = returningContext(piece);
+
+		if (!context.checkIfPieceCanMoveTo(piece, from, to, moveType)) {
 			throw new InvalidMoveException();
 		}
 
+		Move move = new Move();
 		move.setFrom(from);
 		move.setTo(to);
 		move.setMovedPiece(piece);
-
-		// moze w walidatorze zrobic walidator dla sprawdzenia jaki typ ruchu to
-		// bedzie i go zwroci tutaj
-		// dla pionka trzeba zupelnie inaczej
-		// osobny walidator, jeszcze sprawdzac czy to figua przeciwnika
-		// if(board.getPieceAt(to) != null){
-		// move.setType(MoveType.CAPTURE);
-		// }
-		// else{
-		// move.setType(MoveType.ATTACK);
-		// }
-		//
 		move.setType(moveType);
 
 		if (!piece.getType().equals(PieceType.KNIGHT)) {
-			moveValidator.EmptyRoad(from, to, board);
+			context.checkIfRoadToPieceDestinationIsEmpty(from, to, board);
 		}
 
 		// sprawdzic czy krol jest szachowany
@@ -318,15 +310,16 @@ public class BoardManager {
 				}
 			}
 		}
-		MoveValidator moveValidator = new MoveValidator();
+		Context context = null;
 
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinate = new Coordinate(x, y);
 				Piece piece = board.getPieceAt(coordinate);
 				if (piece != null) {
+					context = returningContext(piece);
 					if (piece.getColor() != kingColor) {
-						if (moveValidator.moveValidation(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
+						if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
 							return true;
 						}
 					}
@@ -340,30 +333,33 @@ public class BoardManager {
 	private boolean isAnyMoveValid(Color nextMoveColor) throws InvalidMoveException {
 
 		// TODO please add implementation here
-		MoveValidator moveValidator = new MoveValidator();
+		Context context = null;
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinate = new Coordinate(x, y);
 				Piece piece = board.getPieceAt(coordinate);
 				if (piece != null && piece.getColor().equals(nextMoveColor)) {
+					context = returningContext(piece);
 					for (int i = 0; i < 8; i++) {
 						for (int j = 0; j < 8; j++) {
 							Coordinate coordinateTo = new Coordinate(i, j);
-							if (moveValidator.moveValidation(piece, coordinate, coordinateTo, MoveType.ATTACK)) {
-								if(piece.getType().equals(PieceType.KING)){
-									for(int a = 0; a < 8; a++){
-										for(int b = 0; b < 8; b++){
+							if (context.checkIfPieceCanMoveTo(piece, coordinate, coordinateTo, MoveType.ATTACK)) {
+								if (piece.getType().equals(PieceType.KING)) {
+									for (int a = 0; a < 8; a++) {
+										for (int b = 0; b < 8; b++) {
 											coordinate = new Coordinate(a, b);
-											if(board.getPieceAt(coordinate) != null && !board.getPieceAt(coordinate).getColor().equals(nextMoveColor)){
+											if (board.getPieceAt(coordinate) != null
+													&& !board.getPieceAt(coordinate).getColor().equals(nextMoveColor)) {
 												piece = board.getPieceAt(coordinate);
-												if(moveValidator.moveValidation(piece, coordinate, coordinateTo, MoveType.CAPTURE)){
+												context = returningContext(piece);
+												if (context.checkIfPieceCanMoveTo(piece, coordinate, coordinateTo,
+														MoveType.CAPTURE)) {
 													return false;
 												}
 											}
 										}
 									}
-								}
-								else {
+								} else {
 									return true;
 								}
 							}
@@ -397,6 +393,22 @@ public class BoardManager {
 		}
 
 		return lastNonAttackMoveIndex;
+	}
+
+	private Context returningContext(Piece piece) {
+		if (piece.getType().equals(PieceType.BISHOP)) {
+			return new Context(new BishopValidator());
+		} else if (piece.getType().equals(PieceType.ROOK)) {
+			return new Context(new RookValidator());
+		} else if (piece.getType().equals(PieceType.KING)) {
+			return new Context(new KingValidator());
+		} else if (piece.getType().equals(PieceType.QUEEN)) {
+			return new Context(new QueenValidator());
+		} else if (piece.getType().equals(PieceType.KNIGHT)) {
+			return new Context(new KnightValidator());
+		} else {
+			return new Context(new PawnValidator());
+		}
 	}
 
 }
