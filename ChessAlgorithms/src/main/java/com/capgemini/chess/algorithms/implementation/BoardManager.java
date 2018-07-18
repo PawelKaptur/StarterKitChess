@@ -250,7 +250,7 @@ public class BoardManager {
 
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
 		// TODO please add implementation here
-		if (this.board.getMoveHistory().size() == 0) {
+		if (blackPieces.size() == 0 && whitePieces.size() == 0) {
 			addPiecesToLists();
 		}
 
@@ -274,14 +274,14 @@ public class BoardManager {
 
 		creatingNewBoard(piece, from, to);
 		updateLists(move);
-
+		
 		if (isKingInCheck(nextMoveColor)) {
 			whitePieces = new HashMap<Coordinate, Piece>();
 			blackPieces = new HashMap<Coordinate, Piece>();
 			addPiecesToLists();
 			throw new KingInCheckException();
 		}
-
+		
 		return move;
 	}
 
@@ -377,17 +377,18 @@ public class BoardManager {
 		if (whitePieces.size() == 0 && blackPieces.size() == 0) {
 			addPiecesToLists();
 		}
-
+		
 		Coordinate kingCoordinate = null;
 		if (kingColor.equals(Color.WHITE)) {
 			kingCoordinate = getCoordinatesByKing(whitePieces, Piece.WHITE_KING);
 		} else {
 			kingCoordinate = getCoordinatesByKing(blackPieces, Piece.BLACK_KING);
 		}
-
+	
 		if (kingCoordinate == null) {
 			return false;
 		}
+		
 		return checkingIsKingInCheck(kingCoordinate, kingColor);
 	}
 
@@ -602,6 +603,7 @@ public class BoardManager {
 	}
 
 	public static <T, E> Coordinate getCoordinatesByKing(Map<T, E> map, E value) {
+		
 		for (Entry<T, E> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return (Coordinate) entry.getKey();

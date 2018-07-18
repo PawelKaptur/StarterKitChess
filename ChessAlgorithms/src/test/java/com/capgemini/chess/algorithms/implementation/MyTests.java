@@ -18,7 +18,7 @@ import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveExcep
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
 
 public class MyTests {
-	
+
 	@Test
 	public void shouldThrowInvalidCoordinatesExceptionWhilePerformingMoveInvalidIndexOutOfBoundWithNegativeBounds()
 			throws InvalidMoveException {
@@ -36,7 +36,7 @@ public class MyTests {
 		// then
 		assertTrue(exceptionThrown);
 	}
-	
+
 	@Test
 	public void shouldThrowInvalidMoveExceptionBecauseNotYourPiece() throws InvalidMoveException {
 		// given
@@ -44,7 +44,7 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(5, 4));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		boolean exceptionThrown = false;
@@ -57,7 +57,7 @@ public class MyTests {
 		// then
 		assertTrue(exceptionThrown);
 	}
-	
+
 	@Test
 	public void shouldThrowInvalidMoveExceptionBecauseKingWillBeInCheck() throws InvalidMoveException {
 		// given
@@ -65,12 +65,12 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		boolean exceptionThrown = false;
 		try {
-			boardManager.performMove(new Coordinate(2,0), new Coordinate(1,0));
+			boardManager.performMove(new Coordinate(2, 0), new Coordinate(1, 0));
 		} catch (InvalidMoveException e) {
 			exceptionThrown = true;
 		}
@@ -78,7 +78,7 @@ public class MyTests {
 		// then
 		assertTrue(exceptionThrown);
 	}
-	
+
 	@Test
 	public void shouldMoveKing() throws InvalidMoveException {
 		// given
@@ -86,17 +86,16 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
-		boardManager.performMove(new Coordinate(2,0), new Coordinate(3,0));
-	
+		boardManager.performMove(new Coordinate(2, 0), new Coordinate(3, 0));
 
 		// then
 		assertNull(boardManager.getBoard().getPieceAt(new Coordinate(2, 0)));
 		assertEquals(Piece.WHITE_KING, boardManager.getBoard().getPieceAt(new Coordinate(3, 0)));
 	}
-	
+
 	@Test
 	public void shouldThrowKingInCheckException() throws InvalidMoveException {
 		// given
@@ -105,12 +104,12 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		boolean exceptionThrown = false;
 		try {
-			boardManager.performMove(new Coordinate(2,0), new Coordinate(3,1));
+			boardManager.performMove(new Coordinate(2, 0), new Coordinate(3, 1));
 		} catch (InvalidMoveException e) {
 			exceptionThrown = true;
 		}
@@ -118,7 +117,7 @@ public class MyTests {
 		// then
 		assertTrue(exceptionThrown);
 	}
-	
+
 	@Test
 	public void shouldAssertCheckMate() throws InvalidMoveException {
 		// given
@@ -127,15 +126,15 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		BoardState boardState = boardManager.updateBoardState();
-		
+
 		// then
 		assertEquals(BoardState.CHECK_MATE, boardState);
 	}
-	
+
 	@Test
 	public void shouldAssertRegular() throws InvalidMoveException {
 		// given
@@ -143,11 +142,11 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		BoardState boardState = boardManager.updateBoardState();
-		
+
 		// then
 		assertEquals(BoardState.REGULAR, boardState);
 	}
@@ -160,16 +159,16 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
-		boardManager.performMove(new Coordinate(2,0), new Coordinate(1,0));
-	
+		boardManager.performMove(new Coordinate(2, 0), new Coordinate(1, 0));
+
 		// then
 		assertNull(boardManager.getBoard().getPieceAt(new Coordinate(2, 0)));
 		assertEquals(Piece.WHITE_KING, boardManager.getBoard().getPieceAt(new Coordinate(1, 0)));
 	}
-	
+
 	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingFigure() throws InvalidMoveException {
 		// given
@@ -178,12 +177,34 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(1, 0));
-		
+
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		boolean exceptionThrown = false;
 		try {
-			boardManager.performMove(new Coordinate(1,2), new Coordinate(2,3));
+			boardManager.performMove(new Coordinate(1, 2), new Coordinate(2, 3));
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+
+	@Test
+	public void shouldThrowKingInCheckExceptionWhenMovingKing() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(0, 2));
+		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(0, 1));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(0, 0));
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 1));
+
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boolean exceptionThrown = false;
+		try {
+			boardManager.performMove(new Coordinate(2, 1), new Coordinate(2, 0));
 		} catch (KingInCheckException e) {
 			exceptionThrown = true;
 		}
@@ -192,15 +213,37 @@ public class MyTests {
 		assertTrue(exceptionThrown);
 	}
 	
+	@Test
+	public void shouldThrowKingInCheckExceptionWhenMovingBlackPiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(1, 3));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 2));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(1, 1));
+		//board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 2));
+
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boolean exceptionThrown = false;
+		try {
+			boardManager.performMove(new Coordinate(1, 2), new Coordinate(4, 2));
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+
 	private Move createDummyMove(Board board) {
-		
+
 		Move move = new Move();
-		
+
 		if (board.getMoveHistory().size() % 2 == 0) {
 			board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(0, 0));
 			move.setMovedPiece(Piece.WHITE_ROOK);
-		}
-		else {
+		} else {
 			board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(0, 0));
 			move.setMovedPiece(Piece.BLACK_ROOK);
 		}
