@@ -388,7 +388,6 @@ public class BoardManager {
 		if (kingCoordinate == null) {
 			return false;
 		}
-
 		return checkingIsKingInCheck(kingCoordinate, kingColor);
 	}
 
@@ -489,7 +488,13 @@ public class BoardManager {
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
 			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
-				return true;
+				try {
+					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
+					context.checkIfRoadToPieceDestinationIsEmpty(coordinate, kingCoordinate, fakeBoard);
+					return true;
+				} catch (InvalidMoveException e) {
+					continue;
+				}
 			}
 		}
 		return false;
@@ -502,7 +507,13 @@ public class BoardManager {
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
 			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
-				return true;
+				try {
+					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
+					context.checkIfRoadToPieceDestinationIsEmpty(coordinate, kingCoordinate, fakeBoard);
+					return true;
+				} catch (InvalidMoveException e) {
+					continue;
+				}
 			}
 		}
 		return false;

@@ -15,6 +15,7 @@ import com.capgemini.chess.algorithms.data.enums.Piece;
 import com.capgemini.chess.algorithms.data.generated.Board;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidCoordinatesException;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
+import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
 
 public class MyTests {
 	
@@ -149,6 +150,46 @@ public class MyTests {
 		
 		// then
 		assertEquals(BoardState.REGULAR, boardState);
+	}
+
+	@Test
+	public void shouldMoveKingBehindPiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
+		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(2,0), new Coordinate(1,0));
+	
+		// then
+		assertNull(boardManager.getBoard().getPieceAt(new Coordinate(2, 0)));
+		assertEquals(Piece.WHITE_KING, boardManager.getBoard().getPieceAt(new Coordinate(1, 0)));
+	}
+	
+	@Test
+	public void shouldThrowKingInCheckExceptionWhenMovingFigure() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
+		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
+		board.setPieceAt(Piece.WHITE_KING, new Coordinate(1, 0));
+		
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boolean exceptionThrown = false;
+		try {
+			boardManager.performMove(new Coordinate(1,2), new Coordinate(2,3));
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
 	}
 	
 	private Move createDummyMove(Board board) {
