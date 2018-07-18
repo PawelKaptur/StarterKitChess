@@ -14,7 +14,7 @@ public abstract class AbstractMoveValidator {
 	private int toY;
 	private int changeX;
 	private int changeY;
-	
+	private Board board;
 	
 	// Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to
 	// tylko dla pionka zrobione, piece tez dla pionka
@@ -28,81 +28,83 @@ public abstract class AbstractMoveValidator {
 		this.toY = to.getY();
 		this.changeX = fromX - toX;
 		this.changeY = fromY - toY;
+		this.board = board;
 		
-		// ruchy na skos
 		if (fromX != toX && fromY != toY) {
-			int change = Math.abs(from.getX() - to.getX());
-			// ruch na skos prawo-gora
-			if (fromX < toX && fromY < toY) {
-				for (int x = fromX + 1, y = fromY + 1; x < toX && y < toY; x++, y++) {
-					Coordinate coordinate = new Coordinate(x, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
-
-			// ruch na skos prawo-dol
-			if (fromX < toX && fromY > toY) {
-				for (int x = fromX + 1, y = fromY - 1; x < toX && y > toY; x++, y--) {
-					Coordinate coordinate = new Coordinate(x, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
-
-			// ruch na skos lewo-dol
-			if (fromX > toX && fromY > toY) {
-				for (int x = fromX - 1, y = fromY - 1; x > toX && y > toY; x--, y--) {
-					Coordinate coordinate = new Coordinate(x, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
-
-			// ruch na skos lewo-gora
-			if (fromX > toX && fromY < toY) {
-				for (int x = fromX - 1, y = fromY + 1; x > toX && y < toY; x--, y++) {
-					Coordinate coordinate = new Coordinate(x, y);
-					if (board.getPieceAt(coordinate) != null) {
-						throw new InvalidMoveException();
-					}
-				}
-			}
-
+			diagonalMove();
 		}
 
-		if (changeX != 0 && changeY == 0) {
-			horizontalMove(board);
+		else if (changeX != 0 && changeY == 0) {
+			horizontalMove();
 		}
 
 		else if (changeX == 0 && changeY != 0) {
-			verticalMove(board);
+			verticalMove();
 		}
 		
 		return true;
 	}
 	
-	private void horizontalMove(Board board) throws InvalidMoveException{
+	private void horizontalMove() throws InvalidMoveException{
 		int change = changeX > 0 ? -1 : 1;
 
 		for (int x = fromX + change; x != toX; x = x + change) {
 			Coordinate coordinate = new Coordinate(x, toY);
-			if (board.getPieceAt(coordinate) != null) {
+			if (this.board.getPieceAt(coordinate) != null) {
 				throw new InvalidMoveException();
 			}
 		}
 	}
 	
-	private void verticalMove(Board board) throws InvalidMoveException{
+	private void verticalMove() throws InvalidMoveException{
 		int change = changeY > 0 ? -1 : 1;
 
 		for (int y = fromY + change; y != toY; y = y + change) {
 			Coordinate coordinate = new Coordinate(toX, y);
-			if (board.getPieceAt(coordinate) != null) {
+			if (this.board.getPieceAt(coordinate) != null) {
 				throw new InvalidMoveException();
+			}
+		}
+	}
+	
+	private void diagonalMove() throws InvalidMoveException{
+		// ruch na skos prawo-gora
+		if (fromX < toX && fromY < toY) {
+			for (int x = fromX + 1, y = fromY + 1; x < toX && y < toY; x++, y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				if (this.board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
+				}
+			}
+		}
+
+		// ruch na skos prawo-dol
+		if (fromX < toX && fromY > toY) {
+			for (int x = fromX + 1, y = fromY - 1; x < toX && y > toY; x++, y--) {
+				Coordinate coordinate = new Coordinate(x, y);
+				if (this.board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
+				}
+			}
+		}
+
+		// ruch na skos lewo-dol
+		if (fromX > toX && fromY > toY) {
+			for (int x = fromX - 1, y = fromY - 1; x > toX && y > toY; x--, y--) {
+				Coordinate coordinate = new Coordinate(x, y);
+				if (this.board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
+				}
+			}
+		}
+
+		// ruch na skos lewo-gora
+		if (fromX > toX && fromY < toY) {
+			for (int x = fromX - 1, y = fromY + 1; x > toX && y < toY; x--, y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				if (this.board.getPieceAt(coordinate) != null) {
+					throw new InvalidMoveException();
+				}
 			}
 		}
 	}
