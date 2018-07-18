@@ -214,6 +214,27 @@ public class MyTests {
 	}
 	
 	@Test
+	public void shouldMovePieceToCapture() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(1, 3));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 1));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(1, 1));
+
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		
+		
+		boardManager.performMove(new Coordinate(2, 1), new Coordinate(1, 1));
+		
+
+		// then
+		assertNull(boardManager.getBoard().getPieceAt(new Coordinate(2, 1)));
+		assertEquals(Piece.BLACK_ROOK, boardManager.getBoard().getPieceAt(new Coordinate(1, 1)));
+	}
+	
+	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingBlackPiece() throws InvalidMoveException {
 		// given
 		Board board = new Board();
@@ -221,13 +242,35 @@ public class MyTests {
 		board.setPieceAt(Piece.BLACK_KING, new Coordinate(1, 3));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 2));
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(1, 1));
-		//board.setPieceAt(Piece.WHITE_KING, new Coordinate(3, 2));
 
 		// when
 		BoardManager boardManager = new BoardManager(board);
 		boolean exceptionThrown = false;
 		try {
 			boardManager.performMove(new Coordinate(1, 2), new Coordinate(4, 2));
+		} catch (KingInCheckException e) {
+			exceptionThrown = true;
+		}
+
+		// then
+		assertTrue(exceptionThrown);
+	}
+	
+	@Test
+	public void shouldThrowKingInCheckExceptionWhenMovingBlackFigure() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.BLACK_KING, new Coordinate(2, 4));
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 6));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(2, 6));
+		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(4, 4));
+
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boolean exceptionThrown = false;
+		try {
+			boardManager.performMove(new Coordinate(1, 6), new Coordinate(2, 6));
 		} catch (KingInCheckException e) {
 			exceptionThrown = true;
 		}
