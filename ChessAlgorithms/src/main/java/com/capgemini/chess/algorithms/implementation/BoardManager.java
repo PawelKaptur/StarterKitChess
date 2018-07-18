@@ -16,6 +16,7 @@ import com.capgemini.chess.algorithms.data.enums.MoveType;
 import com.capgemini.chess.algorithms.data.enums.Piece;
 import com.capgemini.chess.algorithms.data.enums.PieceType;
 import com.capgemini.chess.algorithms.data.generated.Board;
+import com.capgemini.chess.algorithms.implementation.exceptions.InvalidCoordinatesException;
 import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveException;
 import com.capgemini.chess.algorithms.implementation.exceptions.KingInCheckException;
 import com.capgemini.chess.algorithms.validator.BishopValidator;
@@ -340,9 +341,17 @@ public class BoardManager {
 	}
 
 	private void checkIfCoordinatesAreOutOfBound(Coordinate from, Coordinate to) throws InvalidMoveException {
-		if (from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7) {
-			throw new InvalidMoveException();
+		double middleOfPossibleCoordinate = 3.5;
+		boolean checkIfFromCoordinateisValid = Math
+				.abs(from.getX() - middleOfPossibleCoordinate) > middleOfPossibleCoordinate
+				|| Math.abs(to.getX() - middleOfPossibleCoordinate) > middleOfPossibleCoordinate;
+		boolean checkIfToCoordinateisValid = Math
+				.abs(from.getY() - middleOfPossibleCoordinate) > middleOfPossibleCoordinate
+				|| Math.abs(to.getY() - middleOfPossibleCoordinate) > middleOfPossibleCoordinate;
+		if (checkIfFromCoordinateisValid || checkIfToCoordinateisValid) {
+			throw new InvalidCoordinatesException();
 		}
+
 	}
 
 	private boolean isKingInCheck(Color kingColor) throws InvalidMoveException {
@@ -435,18 +444,17 @@ public class BoardManager {
 	}
 
 	private void updateLists(Move move) {
-		if(move.getMovedPiece().getColor().equals(Color.WHITE)){
+		if (move.getMovedPiece().getColor().equals(Color.WHITE)) {
 			whitePieces.put(move.getTo(), move.getMovedPiece());
 			whitePieces.remove(move.getFrom());
 			blackPieces.remove(move.getTo());
-		}
-		else {
+		} else {
 			blackPieces.put(move.getTo(), move.getMovedPiece());
 			blackPieces.remove(move.getFrom());
 			whitePieces.remove(move.getTo());
 		}
 	}
-	
+
 	private boolean checkingIsKingInCheck(Coordinate kingCoordinate, Color kingColor) {
 		if (kingColor.equals(Color.WHITE)) {
 			return checkingIsWhiteKingInCheck(kingCoordinate);

@@ -254,7 +254,6 @@ public class BoardManagerTest {
 		assertEquals(Piece.BLACK_ROOK, move.getMovedPiece());
 	}
 	
-	//na razie olac
 //	@Test
 //	public void testPerformMoveCastling() throws InvalidMoveException {
 //		// given
@@ -271,7 +270,6 @@ public class BoardManagerTest {
 //		assertEquals(Piece.WHITE_KING, move.getMovedPiece());
 //	}
 	
-	//na razie olac
 //	@Test
 //	public void testPerformMoveEnPassant() throws InvalidMoveException {
 //		// given
