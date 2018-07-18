@@ -275,6 +275,8 @@ public class BoardManager {
 			throw new KingInCheckException();
 		}
 
+		updateLists(move);
+
 		return move;
 	}
 
@@ -345,7 +347,6 @@ public class BoardManager {
 
 	private boolean isKingInCheck(Color kingColor) throws InvalidMoveException {
 		// TODO please add implementation here
-
 		if (whitePieces.size() == 0 && blackPieces.size() == 0) {
 			addPiecesToLists();
 		}
@@ -433,14 +434,19 @@ public class BoardManager {
 		}
 	}
 
-	private void updateBlackList() {
-
+	private void updateLists(Move move) {
+		if(move.getMovedPiece().getColor().equals(Color.WHITE)){
+			whitePieces.put(move.getTo(), move.getMovedPiece());
+			whitePieces.remove(move.getFrom());
+			blackPieces.remove(move.getTo());
+		}
+		else {
+			blackPieces.put(move.getTo(), move.getMovedPiece());
+			blackPieces.remove(move.getFrom());
+			whitePieces.remove(move.getTo());
+		}
 	}
-
-	private void updateWhiteList() {
-
-	}
-
+	
 	private boolean checkingIsKingInCheck(Coordinate kingCoordinate, Color kingColor) {
 		if (kingColor.equals(Color.WHITE)) {
 			return checkingIsWhiteKingInCheck(kingCoordinate);
@@ -492,25 +498,15 @@ public class BoardManager {
 		return false;
 	}
 
-	// to jeszcze rozbic
 	private boolean canPiecesGoSomewhereOnBoard(Context context, Coordinate coordinateFrom, Piece piece,
 			Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
-				// tu sprawdzanie czy moze isc na koordynaty,
-				// wypadaloy chyba jeszcze sprawdzic tutaj czy droga
-				// wolna
 				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.ATTACK)) {
-					// jesli figura jest krolem to trzeba sprawdzic
-					// czy nie ma szacha
 					if (piece.getType().equals(PieceType.KING)) {
 						return checkIfNewPositionOfKingWillBeChecked(coordinateTo, opponentPieces);
-					}
-					// jesli figura nie jest krolem to moze tam isc
-					// bez problemu, jeszcze przydaloby sie
-					// sprawdzic czy nie odslania taki ruch krola
-					else {
+					} else {
 						return true;
 					}
 				}
