@@ -249,72 +249,98 @@ public class BoardManager {
 
 	private Move validateMove(Coordinate from, Coordinate to) throws InvalidMoveException, KingInCheckException {
 		// TODO please add implementation here
-
-		// nie wiem czy to tutaj to dobre miejsce z ta metoda, nie wiem czy tu
-		// inicjowac, mozna tez sprawdzic czy listy nie sa puste to wedy tez
-		// mozna inicjowac
 		if (this.board.getMoveHistory().size() == 0) {
 			addPiecesToLists();
 		}
 
-		// zrobic osobna metode z tego, sprawdzenie czy nie jest poza plansza
-		if (from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7) {
-			throw new InvalidMoveException();
-		}
+		checkIfCoordinatesAreOutOfBound(from, to);
 
-		Piece piece = board.getPieceAt(from);
-		Color colorOfDestinationPiece = null;
-		if (board.getPieceAt(to) != null) {
-			colorOfDestinationPiece = board.getPieceAt(to).getColor();
-		}
-
-		// sprawdzenie czy to nie jest puste pole
-		if (piece == null) {
-			throw new InvalidMoveException();
-		}
+		Piece piece = checkIfPieceIsInCoordinateFrom(from);
 
 		Color nextMoveColor = calculateNextMoveColor();
-		// osobna metoda sprawdzenie czy to jest twoja figura
-		if (!piece.getColor().equals(calculateNextMoveColor())) {
-			throw new InvalidMoveException();
-		}
 
-		// sprawdzenie czy nie atakujesz swojej figury
-		if (colorOfDestinationPiece != null && colorOfDestinationPiece.equals(nextMoveColor)) {
-			throw new InvalidMoveException();
-		}
+		checkIfPieceIsOurs(piece, nextMoveColor);
+		checkIfPieceInCoordinateToIsOpponents(to, nextMoveColor);
 
-		// dopisac jeszcze zeby nie dalo sie zbic krola i to przetestowac
-
-		MoveType moveType;
-		if (board.getPieceAt(to) != null && board.getPieceAt(to).getColor() != nextMoveColor) {
-			moveType = MoveType.CAPTURE;
-		} else {
-			moveType = MoveType.ATTACK;
-		}
-
+		MoveType moveType = setMoveType(to, nextMoveColor);
 		Context context = returningContext(piece);
 
-		if (!context.checkIfPieceCanMoveTo(piece, from, to, moveType)) {
-			throw new InvalidMoveException();
-		}
+		checkIfPieceCanMoveTo(piece, from, to, moveType);
 
-		Move move = new Move();
-		move.setFrom(from);
-		move.setTo(to);
-		move.setMovedPiece(piece);
-		move.setType(moveType);
+		Move move = setMove(piece, from, to, moveType);
 
-		if (!piece.getType().equals(PieceType.KNIGHT)) {
-			context.checkIfRoadToPieceDestinationIsEmpty(from, to, board);
-		}
+		checkIfRoadToPieceDestinationIsEmpty(piece, from, to, context);
 
-		// sprawdzic czy krol jest szachowany
 		if (isKingInCheck(nextMoveColor)) {
 			throw new KingInCheckException();
 		}
 
 		return move;
+	}
+
+	private void checkIfRoadToPieceDestinationIsEmpty(Piece piece, Coordinate from, Coordinate to, Context context)
+			throws InvalidMoveException {
+		if (!piece.getType().equals(PieceType.KNIGHT)) {
+			context.checkIfRoadToPieceDestinationIsEmpty(from, to, board);
+		}
+	}
+
+	private Move setMove(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
+		Move move = new Move();
+		move.setFrom(from);
+		move.setTo(to);
+		move.setMovedPiece(piece);
+		move.setType(moveType);
+		return move;
+	}
+
+	private void checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType)
+			throws InvalidMoveException {
+		Context context = returningContext(piece);
+		if (!context.checkIfPieceCanMoveTo(piece, from, to, moveType)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private MoveType setMoveType(Coordinate to, Color nextMoveColor) {
+		if (board.getPieceAt(to) != null && board.getPieceAt(to).getColor() != nextMoveColor) {
+			return MoveType.CAPTURE;
+		}
+
+		return MoveType.ATTACK;
+	}
+
+	private void checkIfPieceInCoordinateToIsOpponents(Coordinate to, Color nextMoveColor) throws InvalidMoveException {
+		Color colorOfDestinationPiece = null;
+
+		if (board.getPieceAt(to) != null) {
+			colorOfDestinationPiece = board.getPieceAt(to).getColor();
+		}
+
+		if (colorOfDestinationPiece != null && colorOfDestinationPiece.equals(nextMoveColor)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private void checkIfPieceIsOurs(Piece piece, Color nextMoveColor) throws InvalidMoveException {
+		if (!piece.getColor().equals(nextMoveColor)) {
+			throw new InvalidMoveException();
+		}
+	}
+
+	private Piece checkIfPieceIsInCoordinateFrom(Coordinate from) throws InvalidMoveException {
+		Piece piece = board.getPieceAt(from);
+		if (piece == null) {
+			throw new InvalidMoveException();
+		}
+
+		return piece;
+	}
+
+	private void checkIfCoordinatesAreOutOfBound(Coordinate from, Coordinate to) throws InvalidMoveException {
+		if (from.getX() > 7 || from.getY() > 7 || to.getX() > 7 || to.getY() > 7) {
+			throw new InvalidMoveException();
+		}
 	}
 
 	private boolean isKingInCheck(Color kingColor) throws InvalidMoveException {
@@ -450,7 +476,8 @@ public class BoardManager {
 		return false;
 	}
 
-	private boolean checkIsAnyMoveValid(Map<Coordinate, Piece> ourPieces, Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
+	private boolean checkIsAnyMoveValid(Map<Coordinate, Piece> ourPieces, Map<Coordinate, Piece> opponentPieces)
+			throws InvalidMoveException {
 		Context context = null;
 		boolean pieceCanGoSomewhereOnBoard = false;
 		for (Map.Entry<Coordinate, Piece> entry : ourPieces.entrySet()) {
