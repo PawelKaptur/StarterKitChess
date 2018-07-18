@@ -281,7 +281,7 @@ public class BoardManager {
 			addPiecesToLists();
 			throw new KingInCheckException();
 		}
-		
+
 		return move;
 	}
 
@@ -530,8 +530,17 @@ public class BoardManager {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
 				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.ATTACK)) {
+					Move move = setMove(piece, coordinateFrom, coordinateTo, MoveType.ATTACK);
+					creatingNewBoard(piece, coordinateFrom, coordinateTo);
+					updateLists(move);
 					if (piece.getType().equals(PieceType.KING)) {
-						return checkIfNewPositionOfKingWillBeChecked(coordinateTo, opponentPieces);
+						if (checkIfNewPositionOfKingWillBeChecked(coordinateTo, opponentPieces)) {
+							whitePieces = new HashMap<Coordinate, Piece>();
+							blackPieces = new HashMap<Coordinate, Piece>();
+							addPiecesToLists();
+							continue;
+						}
+						return true;
 					} else {
 						return true;
 					}
@@ -546,20 +555,39 @@ public class BoardManager {
 		Context context;
 		Piece piece;
 		Coordinate coordinateFrom;
+
 		for (Map.Entry<Coordinate, Piece> opponentEntry : opponentPieces.entrySet()) {
 			coordinateFrom = opponentEntry.getKey();
 			piece = opponentEntry.getValue();
 			context = returningContext(piece);
+
 			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.CAPTURE)) {
 				try {
-					context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, board);
+					Board fakeBoard = creatingFakeBoard(piece, coordinateFrom, coordinateTo);
+					context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, fakeBoard);
+					return true;
 				} catch (InvalidMoveException e) {
 					continue;
 				}
-				return false;
 			}
 		}
-		return true;
+		return false;
+	}
+
+	private Board creatingFakeBoard(Piece piece, Coordinate from, Coordinate to) {
+		Board fakeBoard = new Board();
+		for (Coordinate coordinate : whitePieces.keySet()) {
+			fakeBoard.setPieceAt(whitePieces.get(coordinate), coordinate);
+		}
+
+		for (Coordinate coordinate : blackPieces.keySet()) {
+			fakeBoard.setPieceAt(blackPieces.get(coordinate), coordinate);
+		}
+
+		fakeBoard.setPieceAt(piece, to);
+		fakeBoard.setPieceAt(null, from);
+
+		return fakeBoard;
 	}
 
 	public static <T, E> Coordinate getCoordinatesByKing(Map<T, E> map, E value) {
