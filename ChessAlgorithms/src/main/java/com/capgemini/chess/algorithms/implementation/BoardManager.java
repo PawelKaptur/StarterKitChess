@@ -272,11 +272,27 @@ public class BoardManager {
 
 		checkIfRoadToPieceDestinationIsEmpty(piece, from, to, context);
 
+		//
+		Board newBoard = new Board();
+		for (Coordinate coordinate : whitePieces.keySet()) {
+			newBoard.setPieceAt(whitePieces.get(coordinate), coordinate);
+		}
+
+		for (Coordinate coordinate : blackPieces.keySet()) {
+			newBoard.setPieceAt(blackPieces.get(coordinate), coordinate);
+		}
+
+		newBoard.setPieceAt(piece, to);
+		newBoard.setPieceAt(null, from);
+
+		updateLists(move);
+
 		if (isKingInCheck(nextMoveColor)) {
+			Move cancelMove = setMove(piece, to, from, moveType);
+			updateLists(cancelMove);
 			throw new KingInCheckException();
 		}
 
-		updateLists(move);
 
 		return move;
 	}
@@ -532,8 +548,12 @@ public class BoardManager {
 			coordinateFrom = opponentEntry.getKey();
 			piece = opponentEntry.getValue();
 			context = returningContext(piece);
-			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.CAPTURE)
-					&& context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, board)) {
+			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.CAPTURE)) {
+				try {
+					context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, board);
+				} catch (InvalidMoveException e) {
+					continue;
+				}
 				return false;
 			}
 		}
