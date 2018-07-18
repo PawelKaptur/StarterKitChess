@@ -272,7 +272,20 @@ public class BoardManager {
 
 		checkIfRoadToPieceDestinationIsEmpty(piece, from, to, context);
 
-		//
+		creatingNewBoard(piece, from, to);
+		updateLists(move);
+
+		if (isKingInCheck(nextMoveColor)) {
+			whitePieces = new HashMap<Coordinate, Piece>();
+			blackPieces = new HashMap<Coordinate, Piece>();
+			addPiecesToLists();
+			throw new KingInCheckException();
+		}
+		
+		return move;
+	}
+
+	private void creatingNewBoard(Piece piece, Coordinate from, Coordinate to) {
 		Board newBoard = new Board();
 		for (Coordinate coordinate : whitePieces.keySet()) {
 			newBoard.setPieceAt(whitePieces.get(coordinate), coordinate);
@@ -284,17 +297,6 @@ public class BoardManager {
 
 		newBoard.setPieceAt(piece, to);
 		newBoard.setPieceAt(null, from);
-
-		updateLists(move);
-
-		if (isKingInCheck(nextMoveColor)) {
-			Move cancelMove = setMove(piece, to, from, moveType);
-			updateLists(cancelMove);
-			throw new KingInCheckException();
-		}
-
-
-		return move;
 	}
 
 	private void checkIfRoadToPieceDestinationIsEmpty(Piece piece, Coordinate from, Coordinate to, Context context)
