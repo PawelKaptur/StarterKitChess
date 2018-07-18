@@ -15,7 +15,7 @@ public abstract class AbstractMoveValidator {
 	private int changeX;
 	private int changeY;
 	private Board board;
-	
+
 	// Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to
 	// tylko dla pionka zrobione, piece tez dla pionka
 	public abstract boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType);
@@ -29,7 +29,7 @@ public abstract class AbstractMoveValidator {
 		this.changeX = fromX - toX;
 		this.changeY = fromY - toY;
 		this.board = board;
-		
+
 		if (fromX != toX && fromY != toY) {
 			diagonalMove();
 		}
@@ -41,11 +41,11 @@ public abstract class AbstractMoveValidator {
 		else if (changeX == 0 && changeY != 0) {
 			verticalMove();
 		}
-		
+
 		return true;
 	}
-	
-	private void horizontalMove() throws InvalidMoveException{
+
+	private void horizontalMove() throws InvalidMoveException {
 		int change = changeX > 0 ? -1 : 1;
 
 		for (int x = fromX + change; x != toX; x = x + change) {
@@ -55,8 +55,8 @@ public abstract class AbstractMoveValidator {
 			}
 		}
 	}
-	
-	private void verticalMove() throws InvalidMoveException{
+
+	private void verticalMove() throws InvalidMoveException {
 		int change = changeY > 0 ? -1 : 1;
 
 		for (int y = fromY + change; y != toY; y = y + change) {
@@ -66,45 +66,14 @@ public abstract class AbstractMoveValidator {
 			}
 		}
 	}
-	
-	private void diagonalMove() throws InvalidMoveException{
-		// ruch na skos prawo-gora
-		if (fromX < toX && fromY < toY) {
-			for (int x = fromX + 1, y = fromY + 1; x < toX && y < toY; x++, y++) {
-				Coordinate coordinate = new Coordinate(x, y);
-				if (this.board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
-			}
-		}
 
-		// ruch na skos prawo-dol
-		if (fromX < toX && fromY > toY) {
-			for (int x = fromX + 1, y = fromY - 1; x < toX && y > toY; x++, y--) {
-				Coordinate coordinate = new Coordinate(x, y);
-				if (this.board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
-			}
-		}
-
-		// ruch na skos lewo-dol
-		if (fromX > toX && fromY > toY) {
-			for (int x = fromX - 1, y = fromY - 1; x > toX && y > toY; x--, y--) {
-				Coordinate coordinate = new Coordinate(x, y);
-				if (this.board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
-			}
-		}
-
-		// ruch na skos lewo-gora
-		if (fromX > toX && fromY < toY) {
-			for (int x = fromX - 1, y = fromY + 1; x > toX && y < toY; x--, y++) {
-				Coordinate coordinate = new Coordinate(x, y);
-				if (this.board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
+	private void diagonalMove() throws InvalidMoveException {
+		changeX = changeX > 0 ? -1 : 1;
+		changeY = changeY > 0 ? -1 : 1;
+		for (int x = fromX + changeX, y = fromY + changeY; x != toX && y != toY; x = x + changeX, y = y + changeY) {
+			Coordinate coordinate = new Coordinate(x, y);
+			if(this.board.getPieceAt(coordinate) != null) {
+				throw new InvalidMoveException();
 			}
 		}
 	}
