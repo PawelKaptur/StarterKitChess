@@ -350,7 +350,7 @@ public class BoardManager {
 			ourPieces = blackPieces;
 			opponentPieces = whitePieces;
 		}
-		
+
 		return checkIsAnyMoveValid(ourPieces, opponentPieces);
 	}
 
@@ -423,7 +423,7 @@ public class BoardManager {
 		}
 	}
 
-	//2 nastpene metody pewnie mozna jakos yuniwersaliyowac
+	// 2 nastpene metody pewnie mozna jakos zuniwersalizowac
 	private boolean checkingIsWhiteKingInCheck(Coordinate kingCoordinate) {
 		Context context = null;
 		for (Map.Entry<Coordinate, Piece> entry : blackPieces.entrySet()) {
@@ -449,8 +449,8 @@ public class BoardManager {
 		}
 		return false;
 	}
-	
-	private boolean checkIsAnyMoveValid(Map<Coordinate, Piece> ourPieces, Map<Coordinate, Piece> opponentPieces) {
+
+	private boolean checkIsAnyMoveValid(Map<Coordinate, Piece> ourPieces, Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
 		Context context = null;
 		boolean pieceCanGoSomewhereOnBoard = false;
 		for (Map.Entry<Coordinate, Piece> entry : ourPieces.entrySet()) {
@@ -458,15 +458,16 @@ public class BoardManager {
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
 			pieceCanGoSomewhereOnBoard = canPiecesGoSomewhereOnBoard(context, coordinateFrom, piece, opponentPieces);
-			if(pieceCanGoSomewhereOnBoard){
+			if (pieceCanGoSomewhereOnBoard) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	//to jeszcze rozbic
-	private boolean canPiecesGoSomewhereOnBoard(Context context, Coordinate coordinateFrom, Piece piece, Map<Coordinate, Piece> opponentPieces){
+
+	// to jeszcze rozbic
+	private boolean canPiecesGoSomewhereOnBoard(Context context, Coordinate coordinateFrom, Piece piece,
+			Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
@@ -477,19 +478,7 @@ public class BoardManager {
 					// jesli figura jest krolem to trzeba sprawdzic
 					// czy nie ma szacha
 					if (piece.getType().equals(PieceType.KING)) {
-						for (Map.Entry<Coordinate, Piece> opponentEntry : opponentPieces.entrySet()) {
-							coordinateFrom = opponentEntry.getKey();
-							piece = opponentEntry.getValue();
-							context = returningContext(piece);
-							// // jesli moze sie ruszyc tam obca figura
-							// to krol nie moze, trzeba by bylo usuwac
-							// krola z terazniejszej pozycji zeby bylo
-							// wiarygodne
-							if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo,
-									MoveType.CAPTURE)) {
-								return false;
-							}
-						}
+						return checkIfNewPositionOfKingWillBeChecked(coordinateTo, opponentPieces);
 					}
 					// jesli figura nie jest krolem to moze tam isc
 					// bez problemu, jeszcze przydaloby sie
@@ -502,10 +491,23 @@ public class BoardManager {
 		}
 		return false;
 	}
-	
-//	public boolean isKingInCheck(){
-//
-//	}
+
+	private boolean checkIfNewPositionOfKingWillBeChecked(Coordinate coordinateTo,
+			Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
+		Context context;
+		Piece piece;
+		Coordinate coordinateFrom;
+		for (Map.Entry<Coordinate, Piece> opponentEntry : opponentPieces.entrySet()) {
+			coordinateFrom = opponentEntry.getKey();
+			piece = opponentEntry.getValue();
+			context = returningContext(piece);
+			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.CAPTURE)
+					&& context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, board)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public static <T, E> Coordinate getCoordinatesByKing(Map<T, E> map, E value) {
 		for (Entry<T, E> entry : map.entrySet()) {
