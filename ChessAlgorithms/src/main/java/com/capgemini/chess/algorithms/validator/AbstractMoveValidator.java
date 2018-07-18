@@ -8,22 +8,27 @@ import com.capgemini.chess.algorithms.implementation.exceptions.InvalidMoveExcep
 
 public abstract class AbstractMoveValidator {
 
+	private int fromX;
+	private int fromY;
+	private int toX;
+	private int toY;
+	private int changeX;
+	private int changeY;
+	
+	
 	// Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to
 	// tylko dla pionka zrobione, piece tez dla pionka
 	public abstract boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType);
 
 	public boolean checkIfRoadToPieceDestinationIsEmpty(Coordinate from, Coordinate to, Board board)
 			throws InvalidMoveException {
-		int fromX = from.getX();
-		int fromY = from.getY();
-		int toX = to.getX();
-		int toY = to.getY();
-		int changeX = Math.abs(fromX - toX);
-		int changeY = Math.abs(fromY - toY);
+		this.fromX = from.getX();
+		this.fromY = from.getY();
+		this.toX = to.getX();
+		this.toY = to.getY();
+		this.changeX = fromX - toX;
+		this.changeY = fromY - toY;
 		
-
-		// int changeOfX = from.getX() - to.getX();
-
 		// ruchy na skos
 		if (fromX != toX && fromY != toY) {
 			int change = Math.abs(from.getX() - to.getX());
@@ -69,32 +74,36 @@ public abstract class AbstractMoveValidator {
 
 		}
 
-		// ruch w poziomie
-		if (fromX != toX && changeY == 0) {
-			int changeOfX = from.getX() - to.getX();
-			int change = changeOfX > 0 ? -1 : 1;
-
-			for (int x = fromX + change; x != toX; x = x + change) {
-				Coordinate coordinate = new Coordinate(x, toY);
-				if (board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
-			}
+		if (changeX != 0 && changeY == 0) {
+			horizontalMove(board);
 		}
 
-		// ruch w pionie
-		if (changeX == 0 && fromY != toY) {
-			int changeOfY = from.getY() - to.getY();
-			int change = changeOfY > 0 ? -1 : 1;
-
-			for (int y = fromY + change; y != toY; y = y + change) {
-				Coordinate coordinate = new Coordinate(toX, y);
-				if (board.getPieceAt(coordinate) != null) {
-					throw new InvalidMoveException();
-				}
-			}
+		else if (changeX == 0 && changeY != 0) {
+			verticalMove(board);
 		}
 		
 		return true;
+	}
+	
+	private void horizontalMove(Board board) throws InvalidMoveException{
+		int change = changeX > 0 ? -1 : 1;
+
+		for (int x = fromX + change; x != toX; x = x + change) {
+			Coordinate coordinate = new Coordinate(x, toY);
+			if (board.getPieceAt(coordinate) != null) {
+				throw new InvalidMoveException();
+			}
+		}
+	}
+	
+	private void verticalMove(Board board) throws InvalidMoveException{
+		int change = changeY > 0 ? -1 : 1;
+
+		for (int y = fromY + change; y != toY; y = y + change) {
+			Coordinate coordinate = new Coordinate(toX, y);
+			if (board.getPieceAt(coordinate) != null) {
+				throw new InvalidMoveException();
+			}
+		}
 	}
 }
