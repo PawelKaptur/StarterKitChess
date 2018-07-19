@@ -433,8 +433,8 @@ public class BoardManager {
 	private void addPiecesToLists() {
 		whitePieces = new HashMap<Coordinate, Piece>();
 		blackPieces = new HashMap<Coordinate, Piece>();
-		for (int x = 0; x < 8; x++) {
-			for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < board.SIZE; x++) {
+			for (int y = 0; y < board.SIZE; y++) {
 				Coordinate coordinate = new Coordinate(x, y);
 				Piece piece = board.getPieceAt(coordinate);
 				if (piece != null && piece.getColor().equals(Color.WHITE)) {
@@ -539,8 +539,8 @@ public class BoardManager {
 
 	private boolean canPiecesGoSomewhereOnBoard(Context context, Coordinate coordinateFrom, Piece piece,
 			Map<Coordinate, Piece> opponentPieces) throws InvalidMoveException {
-		for (int x = 0; x < 8; x++) {
-			for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < board.SIZE; x++) {
+			for (int y = 0; y < board.SIZE; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
 				Color color = piece.getColor();
 			

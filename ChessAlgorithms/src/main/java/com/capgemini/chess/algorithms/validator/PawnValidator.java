@@ -7,47 +7,60 @@ import com.capgemini.chess.algorithms.data.enums.Piece;
 
 public class PawnValidator extends AbstractMoveValidator {
 
+	private static final int STARTING_Y_POSITION_FOR_WHITE_PAWN = 1;
+	private static final int STARTING_Y_POSITION_FOR_BLACK_PAWN = 6;
+
+	private int changeX;
+	private int changeY;
+	private MoveType moveType;
+	private Coordinate from;
+
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
-		int changeX = Math.abs(from.getX() - to.getX());
-		int changeY = from.getY() - to.getY();
-
-		int startingYPositionOfWhitePawn = 1;
-		int startingYPostitionOfBlackPawn = 6;
+		this.changeX = Math.abs(from.getX() - to.getX());
+		this.changeY = from.getY() - to.getY();
+		this.moveType = moveType;
+		this.from = from;
 
 		if (piece.getColor().equals(Color.WHITE)) {
-			if (moveType == MoveType.ATTACK) {
-				if (changeX == 0 && changeY == -1) {
-					return true;
-				} else if (from.getY() == startingYPositionOfWhitePawn && changeX == 0
-						&& (changeY == -1 || changeY == -2)) {
-					return true;
-				}
-				return false;
-
-			} else if (moveType == MoveType.CAPTURE) {
-				if (changeX == 1 && changeY == -1) {
-					return true;
-				}
-				return false;
-			}
+			return checkWhitePawn();
 		} else {
-			if (moveType == MoveType.ATTACK) {
-				if (changeX == 0 && changeY == 1) {
-					return true;
-				} else if (from.getY() == startingYPostitionOfBlackPawn && changeX == 0
-						&& (changeY == 1 || changeY == 2)) {
-					return true;
-				}
-				return false;
-
-			} else if (moveType == MoveType.CAPTURE) {
-				if (changeX == 1 && changeY == 1) {
-					return true;
-				}
-				return false;
-			}
+			return checkBlackPawn();
 		}
-		return false;
+	}
+
+	private boolean checkWhitePawn() {
+		if (moveType == MoveType.ATTACK) {
+			if (changeX == 0 && changeY == -1) {
+				return true;
+			} else if (from.getY() == STARTING_Y_POSITION_FOR_WHITE_PAWN && changeX == 0
+					&& (changeY == -1 || changeY == -2)) {
+				return true;
+			}
+			return false;
+		} else {
+			if (changeX == 1 && changeY == -1) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private boolean checkBlackPawn() {
+		if (moveType == MoveType.ATTACK) {
+			if (changeX == 0 && changeY == 1) {
+				return true;
+			} else if (from.getY() == STARTING_Y_POSITION_FOR_BLACK_PAWN && changeX == 0
+					&& (changeY == 1 || changeY == 2)) {
+				return true;
+			}
+			return false;
+
+		} else {
+			if (changeX == 1 && changeY == 1) {
+				return true;
+			}
+			return false;
+		}
 	}
 }
