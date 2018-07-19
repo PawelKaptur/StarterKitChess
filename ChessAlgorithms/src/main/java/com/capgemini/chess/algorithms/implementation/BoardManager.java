@@ -370,11 +370,10 @@ public class BoardManager {
 			return false;
 		}
 		
-		return checkingIsKingInCheck(kingCoordinate, kingColor);
+		return transmissionRightCoordinatesAndColor(kingCoordinate, kingColor);
 	}
 
 	private boolean isAnyMoveValid(Color nextMoveColor) throws InvalidMoveException {
-
 		// TODO please add implementation here
 		Map<Coordinate, Piece> ourPieces;
 		Map<Coordinate, Piece> opponentPieces;
@@ -427,35 +426,7 @@ public class BoardManager {
 		}
 	}
 
-	private void addPiecesToLists() {
-		whitePieces = new HashMap<Coordinate, Piece>();
-		blackPieces = new HashMap<Coordinate, Piece>();
-		for (int x = 0; x < Board.SIZE; x++) {
-			for (int y = 0; y < Board.SIZE; y++) {
-				Coordinate coordinate = new Coordinate(x, y);
-				Piece piece = board.getPieceAt(coordinate);
-				if (piece != null && piece.getColor().equals(Color.WHITE)) {
-					whitePieces.put(coordinate, piece);
-				} else if (piece != null && piece.getColor().equals(Color.BLACK)) {
-					blackPieces.put(coordinate, piece);
-				}
-			}
-		}
-	}
-
-	private void updateLists(Move move) {
-		if (move.getMovedPiece().getColor().equals(Color.WHITE)) {
-			whitePieces.put(move.getTo(), move.getMovedPiece());
-			whitePieces.remove(move.getFrom());
-			blackPieces.remove(move.getTo());
-		} else {
-			blackPieces.put(move.getTo(), move.getMovedPiece());
-			blackPieces.remove(move.getFrom());
-			whitePieces.remove(move.getTo());
-		}
-	}
-
-	private boolean checkingIsKingInCheck(Coordinate kingCoordinate, Color kingColor) {
+	private boolean transmissionRightCoordinatesAndColor(Coordinate kingCoordinate, Color kingColor) {
 		if (kingColor.equals(Color.WHITE)) {
 			return kingInCheck(kingCoordinate, blackPieces, Color.WHITE);
 		} else {
@@ -591,6 +562,34 @@ public class BoardManager {
 		fakeBoard.setPieceAt(null, from);
 
 		return fakeBoard;
+	}
+	
+	private void addPiecesToLists() {
+		whitePieces = new HashMap<Coordinate, Piece>();
+		blackPieces = new HashMap<Coordinate, Piece>();
+		for (int x = 0; x < Board.SIZE; x++) {
+			for (int y = 0; y < Board.SIZE; y++) {
+				Coordinate coordinate = new Coordinate(x, y);
+				Piece piece = board.getPieceAt(coordinate);
+				if (piece != null && piece.getColor().equals(Color.WHITE)) {
+					whitePieces.put(coordinate, piece);
+				} else if (piece != null && piece.getColor().equals(Color.BLACK)) {
+					blackPieces.put(coordinate, piece);
+				}
+			}
+		}
+	}
+
+	private void updateLists(Move move) {
+		if (move.getMovedPiece().getColor().equals(Color.WHITE)) {
+			whitePieces.put(move.getTo(), move.getMovedPiece());
+			whitePieces.remove(move.getFrom());
+			blackPieces.remove(move.getTo());
+		} else {
+			blackPieces.put(move.getTo(), move.getMovedPiece());
+			blackPieces.remove(move.getFrom());
+			whitePieces.remove(move.getTo());
+		}
 	}
 
 	public static <Coordinate, Piece> Coordinate getCoordinatesByKing(Map<Coordinate, Piece> map, Piece value) {

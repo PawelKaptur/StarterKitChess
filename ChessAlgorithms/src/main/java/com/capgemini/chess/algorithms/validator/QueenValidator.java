@@ -5,7 +5,6 @@ import com.capgemini.chess.algorithms.data.enums.MoveType;
 import com.capgemini.chess.algorithms.data.enums.Piece;
 
 public class QueenValidator extends AbstractMoveValidator {
-	//zobaczyc czy nie uzywac tutaj validatora dla wiezy i gonca
 
 	@Override
 	public boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType) {
