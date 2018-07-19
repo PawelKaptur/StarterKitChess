@@ -261,7 +261,19 @@ public class BoardManager {
 		checkIfPieceIsOurs(piece, nextMoveColor);
 		checkIfPieceInCoordinateToIsOpponents(to, nextMoveColor);
 
-		MoveType moveType = setMoveType(to, nextMoveColor);
+		MoveType moveType = null;
+		// en_passant
+		if (piece.getType().equals(PieceType.PAWN)) {
+			if (checkIfSpecialMove(from, to)) {
+				moveType = MoveType.EN_PASSANT;
+			} else{
+				moveType = setMoveType(to, nextMoveColor);
+			}
+		}
+		else {
+			moveType = setMoveType(to, nextMoveColor);
+		}
+		
 		Context context = returningContext(piece);
 
 		checkIfPieceCanMoveTo(piece, from, to, moveType);
@@ -271,12 +283,12 @@ public class BoardManager {
 		checkIfRoadToPieceDestinationIsEmpty(piece, from, to, context);
 
 		updateLists(move);
-		
+
 		if (isKingInCheck(nextMoveColor)) {
 			addPiecesToLists();
 			throw new KingInCheckException();
 		}
-		
+
 		return move;
 	}
 
@@ -308,8 +320,32 @@ public class BoardManager {
 		if (board.getPieceAt(to) != null && board.getPieceAt(to).getColor() != nextMoveColor) {
 			return MoveType.CAPTURE;
 		}
-
+		
 		return MoveType.ATTACK;
+	}
+
+	private boolean checkIfSpecialMove(Coordinate from, Coordinate to) {
+		int positionForWhitePawn = 4;
+		int lastMoveOfEnemyPawn = 2;
+		if(from.getY() == positionForWhitePawn){
+			Coordinate onTheLeft = new Coordinate(from.getX() - 1, positionForWhitePawn);
+			Coordinate onTheRight = new Coordinate(from.getX() + 1, positionForWhitePawn);
+			Piece getPawnOnTheRight = board.getPieceAt(onTheRight);
+			Piece getPawnOnTheLeft = board.getPieceAt(onTheLeft);
+			
+			Move move = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
+			if(getPawnOnTheRight != null && getPawnOnTheRight.equals(Piece.BLACK_PAWN)){
+				if(move != null && Math.abs(move.getFrom().getY() - move.getTo().getY()) == lastMoveOfEnemyPawn){
+					return true;
+				}
+			}
+			else if(getPawnOnTheLeft != null && getPawnOnTheLeft.equals(Piece.BLACK_PAWN)){
+				if(move != null && Math.abs(move.getFrom().getY() - move.getTo().getY()) == lastMoveOfEnemyPawn){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void checkIfPieceInCoordinateToIsOpponents(Coordinate to, Color nextMoveColor) throws InvalidMoveException {
@@ -358,18 +394,18 @@ public class BoardManager {
 		if (whitePieces.size() == 0 && blackPieces.size() == 0) {
 			addPiecesToLists();
 		}
-		
+
 		Coordinate kingCoordinate = null;
 		if (kingColor.equals(Color.WHITE)) {
 			kingCoordinate = getCoordinatesByKing(whitePieces, Piece.WHITE_KING);
 		} else {
 			kingCoordinate = getCoordinatesByKing(blackPieces, Piece.BLACK_KING);
 		}
-	
+
 		if (kingCoordinate == null) {
 			return false;
 		}
-		
+
 		return transmissionRightCoordinatesAndColor(kingCoordinate, kingColor);
 	}
 
@@ -433,20 +469,20 @@ public class BoardManager {
 			return kingInCheck(kingCoordinate, whitePieces, Color.BLACK);
 		}
 	}
-	
-	private boolean kingInCheck(Coordinate kingCoordinate, Map<Coordinate, Piece> piecesMap, Color color){
+
+	private boolean kingInCheck(Coordinate kingCoordinate, Map<Coordinate, Piece> piecesMap, Color color) {
 		Context context = null;
 		for (Map.Entry<Coordinate, Piece> entry : piecesMap.entrySet()) {
 			Coordinate coordinate = entry.getKey();
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
-			
+
 			try {
 				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, color);
 			} catch (InvalidMoveException e1) {
-				
+
 			}
-			
+
 			MoveType moveType = setMoveType(kingCoordinate, color);
 			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, moveType)) {
 				try {
@@ -483,14 +519,14 @@ public class BoardManager {
 			for (int y = 0; y < Board.SIZE; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
 				Color color = piece.getColor();
-			
+
 				try {
 					checkIfPieceInCoordinateToIsOpponents(coordinateTo, color);
 				} catch (InvalidMoveException e1) {
-					
+
 				}
 				MoveType moveType = setMoveType(coordinateTo, color);
-				
+
 				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, moveType)) {
 					Move move = setMove(piece, coordinateFrom, coordinateTo, moveType);
 					updateLists(move);
@@ -520,19 +556,18 @@ public class BoardManager {
 			piece = opponentEntry.getValue();
 			context = returningContext(piece);
 			Color color;
-			if(piece.getColor().equals(Color.BLACK)){
+			if (piece.getColor().equals(Color.BLACK)) {
 				color = Color.WHITE;
-			}
-			else{
+			} else {
 				color = Color.BLACK;
 			}
-			
+
 			try {
 				checkIfPieceInCoordinateToIsOpponents(coordinateTo, color);
 			} catch (InvalidMoveException e1) {
-				
+
 			}
-			
+
 			MoveType moveType = setMoveType(coordinateTo, color);
 
 			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, moveType)) {
@@ -563,7 +598,7 @@ public class BoardManager {
 
 		return fakeBoard;
 	}
-	
+
 	private void addPiecesToLists() {
 		whitePieces = new HashMap<Coordinate, Piece>();
 		blackPieces = new HashMap<Coordinate, Piece>();
@@ -593,7 +628,7 @@ public class BoardManager {
 	}
 
 	public static <Coordinate, Piece> Coordinate getCoordinatesByKing(Map<Coordinate, Piece> map, Piece value) {
-		
+
 		for (Entry<Coordinate, Piece> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return (Coordinate) entry.getKey();

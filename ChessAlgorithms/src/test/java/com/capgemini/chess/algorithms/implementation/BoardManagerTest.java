@@ -272,7 +272,6 @@ public class BoardManagerTest {
 		assertEquals(Piece.WHITE_KING, move.getMovedPiece());
 	}
 	
-	@Ignore
 	@Test
 	public void testPerformMoveEnPassant() throws InvalidMoveException {
 		// given

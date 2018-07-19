@@ -470,6 +470,51 @@ public class MyTests {
 		assertEquals(Piece.BLACK_PAWN, board.getPieceAt(new Coordinate(5, 5)));
 		assertNull(board.getPieceAt(new Coordinate(6, 6)));
 	}
+	
+	@Test
+	public void shouldPerformMoveEnPassantOnTheRightForWhitePiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		BoardManager boardManager = new BoardManager(board);
+		
+		board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(1, 4));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(2, 6));
+		boardManager.performMove(new Coordinate(2, 6), new Coordinate(2, 4));
+		
+		// when
+		Move move = boardManager.performMove(new Coordinate(1, 4), new Coordinate(2, 5));
+		
+		// then
+		assertEquals(MoveType.EN_PASSANT, move.getType());
+		assertEquals(Piece.WHITE_PAWN, move.getMovedPiece());
+		assertNull(board.getPieceAt(new Coordinate(1, 4)));
+		assertEquals(Piece.WHITE_PAWN, board.getPieceAt(new Coordinate(2, 5)));
+		assertNull(board.getPieceAt(new Coordinate(2, 4)));
+	}
+	
+	@Test
+	public void shouldPerformMoveEnPassantOnTheLeftForWhitePiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		BoardManager boardManager = new BoardManager(board);
+		
+		board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(3, 4));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(2, 6));
+		boardManager.performMove(new Coordinate(2, 6), new Coordinate(2, 4));
+		
+		// when
+		Move move = boardManager.performMove(new Coordinate(3, 4), new Coordinate(2, 5));
+		
+		// then
+		assertEquals(MoveType.EN_PASSANT, move.getType());
+		assertEquals(Piece.WHITE_PAWN, move.getMovedPiece());
+		assertNull(board.getPieceAt(new Coordinate(1, 4)));
+		assertEquals(Piece.WHITE_PAWN, board.getPieceAt(new Coordinate(2, 5)));
+		assertNull(board.getPieceAt(new Coordinate(2, 4)));
+	}
+	
 
 	private Move createDummyMove(Board board) {
 
