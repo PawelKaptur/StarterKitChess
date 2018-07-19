@@ -510,9 +510,54 @@ public class MyTests {
 		// then
 		assertEquals(MoveType.EN_PASSANT, move.getType());
 		assertEquals(Piece.WHITE_PAWN, move.getMovedPiece());
-		assertNull(board.getPieceAt(new Coordinate(1, 4)));
+		assertNull(board.getPieceAt(new Coordinate(3, 4)));
 		assertEquals(Piece.WHITE_PAWN, board.getPieceAt(new Coordinate(2, 5)));
 		assertNull(board.getPieceAt(new Coordinate(2, 4)));
+	}
+	
+	@Test
+	public void shouldPerformMoveEnPassantOnTheLeftForBlackPiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		BoardManager boardManager = new BoardManager(board);
+		
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(4, 1));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(5, 3));
+		
+		boardManager.performMove(new Coordinate(4, 1), new Coordinate(4, 3));
+		
+		// when
+		Move move = boardManager.performMove(new Coordinate(5, 3), new Coordinate(4, 2));
+		
+		// then
+		assertEquals(MoveType.EN_PASSANT, move.getType());
+		assertEquals(Piece.BLACK_PAWN, move.getMovedPiece());
+		assertNull(board.getPieceAt(new Coordinate(5, 3)));
+		assertEquals(Piece.BLACK_PAWN, board.getPieceAt(new Coordinate(4, 2)));
+		assertNull(board.getPieceAt(new Coordinate(4, 3)));
+	}
+	
+	@Test
+	public void shouldPerformMoveEnPassantOnTheRightForBlackPiece() throws InvalidMoveException {
+		// given
+		Board board = new Board();
+		BoardManager boardManager = new BoardManager(board);
+		
+		//board.getMoveHistory().add(createDummyMove(board));
+		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(6, 1));
+		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(5, 3));
+		
+		boardManager.performMove(new Coordinate(6, 1), new Coordinate(6, 3));
+		
+		// when
+		Move move = boardManager.performMove(new Coordinate(5, 3), new Coordinate(6, 2));
+		
+		// then
+		assertEquals(MoveType.EN_PASSANT, move.getType());
+		assertEquals(Piece.BLACK_PAWN, move.getMovedPiece());
+		assertNull(board.getPieceAt(new Coordinate(5, 3)));
+		assertEquals(Piece.BLACK_PAWN, board.getPieceAt(new Coordinate(6, 2)));
+		assertNull(board.getPieceAt(new Coordinate(6, 3)));
 	}
 	
 

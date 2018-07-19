@@ -262,9 +262,9 @@ public class BoardManager {
 		checkIfPieceInCoordinateToIsOpponents(to, nextMoveColor);
 
 		MoveType moveType = null;
-		// en_passant
+		// en_passant to przerobic
 		if (piece.getType().equals(PieceType.PAWN)) {
-			if (checkIfSpecialMove(from, to)) {
+			if (checkIfEnPassant(from, to, nextMoveColor)) {
 				moveType = MoveType.EN_PASSANT;
 			} else{
 				moveType = setMoveType(to, nextMoveColor);
@@ -324,10 +324,12 @@ public class BoardManager {
 		return MoveType.ATTACK;
 	}
 
-	private boolean checkIfSpecialMove(Coordinate from, Coordinate to) {
+	private boolean checkIfEnPassant(Coordinate from, Coordinate to, Color color) {
+		//int change = changeY > 0 ? -1 : 1;
 		int positionForWhitePawn = 4;
+		int positionForBlackPawn = 3;
 		int lastMoveOfEnemyPawn = 2;
-		if(from.getY() == positionForWhitePawn){
+		if(color.equals(Color.WHITE) && from.getY() == positionForWhitePawn){
 			Coordinate onTheLeft = new Coordinate(from.getX() - 1, positionForWhitePawn);
 			Coordinate onTheRight = new Coordinate(from.getX() + 1, positionForWhitePawn);
 			Piece getPawnOnTheRight = board.getPieceAt(onTheRight);
@@ -340,6 +342,24 @@ public class BoardManager {
 				}
 			}
 			else if(getPawnOnTheLeft != null && getPawnOnTheLeft.equals(Piece.BLACK_PAWN)){
+				if(move != null && Math.abs(move.getFrom().getY() - move.getTo().getY()) == lastMoveOfEnemyPawn){
+					return true;
+				}
+			}
+		}
+		else if(color.equals(Color.BLACK) && from.getY() == positionForBlackPawn){
+			Coordinate onTheLeft = new Coordinate(from.getX() - 1, positionForBlackPawn);
+			Coordinate onTheRight = new Coordinate(from.getX() + 1, positionForBlackPawn);
+			Piece getPawnOnTheRight = board.getPieceAt(onTheRight);
+			Piece getPawnOnTheLeft = board.getPieceAt(onTheLeft);
+			
+			Move move = board.getMoveHistory().get(board.getMoveHistory().size() - 1);
+			if(getPawnOnTheRight != null && getPawnOnTheRight.equals(Piece.WHITE_PAWN)){
+				if(move != null && Math.abs(move.getFrom().getY() - move.getTo().getY()) == lastMoveOfEnemyPawn){
+					return true;
+				}
+			}
+			else if(getPawnOnTheLeft != null && getPawnOnTheLeft.equals(Piece.WHITE_PAWN)){
 				if(move != null && Math.abs(move.getFrom().getY() - move.getTo().getY()) == lastMoveOfEnemyPawn){
 					return true;
 				}
@@ -627,7 +647,7 @@ public class BoardManager {
 		}
 	}
 
-	public static <Coordinate, Piece> Coordinate getCoordinatesByKing(Map<Coordinate, Piece> map, Piece value) {
+	public static <T, E> Coordinate getCoordinatesByKing(Map<Coordinate, Piece> map, Piece value) {
 
 		for (Entry<Coordinate, Piece> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
