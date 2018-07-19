@@ -262,7 +262,6 @@ public class BoardManager {
 		checkIfPieceInCoordinateToIsOpponents(to, nextMoveColor);
 
 		MoveType moveType = null;
-		// en_passant to przerobic
 		if (piece.getType().equals(PieceType.PAWN) && checkIfEnPassant(from, to, nextMoveColor)) {
 			moveType = MoveType.EN_PASSANT;
 		}
