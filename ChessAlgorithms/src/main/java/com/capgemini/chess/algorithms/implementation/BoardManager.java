@@ -321,7 +321,6 @@ public class BoardManager {
 	}
 
 	private boolean checkIfEnPassant(Coordinate from, Coordinate to, Color color) {
-		//int change = changeY > 0 ? -1 : 1;
 		int positionForWhitePawn = 4;
 		int positionForBlackPawn = 3;
 		int lastMoveOfEnemyPawn = 2;

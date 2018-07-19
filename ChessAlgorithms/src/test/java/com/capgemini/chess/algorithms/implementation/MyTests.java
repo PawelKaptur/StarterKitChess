@@ -42,7 +42,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionBecauseNotYourPiece() throws InvalidMoveException {
 		// given
-		// Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(5, 4));
@@ -63,7 +62,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionBecauseKingWillBeInCheck() throws InvalidMoveException {
 		// given
-		// Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
@@ -84,7 +82,6 @@ public class MyTests {
 	@Test
 	public void shouldMoveKing() throws InvalidMoveException {
 		// given
-		// Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
@@ -101,7 +98,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowKingInCheckException() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
@@ -123,7 +119,6 @@ public class MyTests {
 	@Test
 	public void shouldAssertCheckMate() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
@@ -140,7 +135,6 @@ public class MyTests {
 	@Test
 	public void shouldAssertRegular() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 4));
 		board.setPieceAt(Piece.WHITE_KING, new Coordinate(2, 0));
@@ -156,7 +150,6 @@ public class MyTests {
 	@Test
 	public void shouldMoveKingBehindPiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
@@ -174,7 +167,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingFigure() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 4));
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 2));
@@ -196,7 +188,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingKing() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.BLACK_KING, new Coordinate(0, 2));
 		board.setPieceAt(Piece.BLACK_KNIGHT, new Coordinate(0, 1));
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(0, 0));
@@ -218,7 +209,6 @@ public class MyTests {
 	@Test
 	public void shouldMovePieceToCapture() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.getMoveHistory().add(createDummyMove(board));
 		board.setPieceAt(Piece.BLACK_KING, new Coordinate(1, 3));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 1));
@@ -237,7 +227,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingBlackPiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.getMoveHistory().add(createDummyMove(board));
 		board.setPieceAt(Piece.BLACK_KING, new Coordinate(1, 3));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 2));
@@ -259,7 +248,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowKingInCheckExceptionWhenMovingBlackFigure() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.getMoveHistory().add(createDummyMove(board));
 		board.setPieceAt(Piece.BLACK_KING, new Coordinate(2, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 6));
@@ -282,7 +270,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionForWhiteBishopRightUpMove() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(1, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(2, 3));
 
@@ -302,7 +289,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionForWhiteBishopRightDownMove() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(4, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(5, 3));
 
@@ -322,7 +308,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionForWhiteQueenLeftDownMove() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(4, 4));
 		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(3, 3));
 
@@ -342,7 +327,6 @@ public class MyTests {
 	@Test
 	public void shouldThrowInvalidMoveExceptionForWhiteQueenLeftUpMove() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		board.setPieceAt(Piece.WHITE_QUEEN, new Coordinate(4, 4));
 		board.setPieceAt(Piece.WHITE_ROOK, new Coordinate(3, 5));
 
@@ -474,7 +458,6 @@ public class MyTests {
 	@Test
 	public void shouldPerformMoveEnPassantOnTheRightForWhitePiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		BoardManager boardManager = new BoardManager(board);
 		
 		board.getMoveHistory().add(createDummyMove(board));
@@ -496,7 +479,6 @@ public class MyTests {
 	@Test
 	public void shouldPerformMoveEnPassantOnTheLeftForWhitePiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		BoardManager boardManager = new BoardManager(board);
 		
 		board.getMoveHistory().add(createDummyMove(board));
@@ -518,7 +500,6 @@ public class MyTests {
 	@Test
 	public void shouldPerformMoveEnPassantOnTheLeftForBlackPiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		BoardManager boardManager = new BoardManager(board);
 		
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(4, 1));
@@ -540,7 +521,6 @@ public class MyTests {
 	@Test
 	public void shouldPerformMoveEnPassantOnTheRightForBlackPiece() throws InvalidMoveException {
 		// given
-		Board board = new Board();
 		BoardManager boardManager = new BoardManager(board);
 		
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(6, 1));
@@ -559,6 +539,20 @@ public class MyTests {
 		assertNull(board.getPieceAt(new Coordinate(6, 3)));
 	}
 	
+	@Test
+	public void shouldMoveBishopAndCapture() throws InvalidMoveException {
+		// given
+		board.setPieceAt(Piece.BLACK_ROOK, new Coordinate(1, 4));
+		board.setPieceAt(Piece.WHITE_BISHOP, new Coordinate(0, 3));
+
+		// when
+		BoardManager boardManager = new BoardManager(board);
+		boardManager.performMove(new Coordinate(0, 3), new Coordinate(1, 4));
+
+		// then
+		assertNull(boardManager.getBoard().getPieceAt(new Coordinate(0, 3)));
+		assertEquals(Piece.WHITE_BISHOP, boardManager.getBoard().getPieceAt(new Coordinate(1, 4)));
+	}
 
 	private Move createDummyMove(Board board) {
 
