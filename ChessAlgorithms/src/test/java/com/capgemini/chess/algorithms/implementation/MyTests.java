@@ -461,8 +461,6 @@ public class MyTests {
 		// when
 		BoardManager boardManager = new BoardManager(board);
 
-		boolean exceptionThrown = false;
-		
 		boardManager.performMove(new Coordinate(1, 1), new Coordinate(2, 2));
 		boardManager.performMove(new Coordinate(6, 6), new Coordinate(5, 5));
 		

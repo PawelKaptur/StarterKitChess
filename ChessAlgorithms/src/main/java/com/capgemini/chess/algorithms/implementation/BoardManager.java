@@ -429,7 +429,6 @@ public class BoardManager {
 		}
 	}
 
-	// moze ponizsze metody do innej klasy
 	private void addPiecesToLists() {
 		whitePieces = new HashMap<Coordinate, Piece>();
 		blackPieces = new HashMap<Coordinate, Piece>();
