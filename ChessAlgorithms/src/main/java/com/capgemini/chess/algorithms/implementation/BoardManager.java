@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
 
 import com.capgemini.chess.algorithms.data.Coordinate;
 import com.capgemini.chess.algorithms.data.Move;
@@ -459,54 +457,26 @@ public class BoardManager {
 
 	private boolean checkingIsKingInCheck(Coordinate kingCoordinate, Color kingColor) {
 		if (kingColor.equals(Color.WHITE)) {
-			return checkingIsWhiteKingInCheck(kingCoordinate);
+			return kingInCheck(kingCoordinate, blackPieces, Color.WHITE);
 		} else {
-			return checkingIsBlackKingInCheck(kingCoordinate);
+			return kingInCheck(kingCoordinate, whitePieces, Color.BLACK);
 		}
 	}
-
-	// 2 nastpene metody pewnie mozna jakos zuniwersalizowac
-	private boolean checkingIsWhiteKingInCheck(Coordinate kingCoordinate){
+	
+	private boolean kingInCheck(Coordinate kingCoordinate, Map<Coordinate, Piece> piecesMap, Color color){
 		Context context = null;
-		for (Map.Entry<Coordinate, Piece> entry : blackPieces.entrySet()) {
+		for (Map.Entry<Coordinate, Piece> entry : piecesMap.entrySet()) {
 			Coordinate coordinate = entry.getKey();
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
 			
 			try {
-				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, Color.WHITE);
+				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, color);
 			} catch (InvalidMoveException e1) {
 				
 			}
 			
-			MoveType moveType = setMoveType(kingCoordinate, Color.WHITE);
-			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, moveType)) {
-				try {
-					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
-					context.checkIfRoadToPieceDestinationIsEmpty(coordinate, kingCoordinate, fakeBoard);
-					return true;
-				} catch (InvalidMoveException e) {
-					continue;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean checkingIsBlackKingInCheck(Coordinate kingCoordinate) {
-		Context context = null;
-		for (Map.Entry<Coordinate, Piece> entry : whitePieces.entrySet()) {
-			Coordinate coordinate = entry.getKey();
-			Piece piece = entry.getValue();
-			context = returningContext(piece);
-			
-			try {
-				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, Color.BLACK);
-			} catch (InvalidMoveException e1) {
-				
-			}
-			
-			MoveType moveType = setMoveType(kingCoordinate, Color.BLACK);
+			MoveType moveType = setMoveType(kingCoordinate, color);
 			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, moveType)) {
 				try {
 					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
