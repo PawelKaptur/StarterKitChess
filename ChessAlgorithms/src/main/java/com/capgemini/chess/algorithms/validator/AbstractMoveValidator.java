@@ -16,8 +16,6 @@ public abstract class AbstractMoveValidator {
 	private int changeY;
 	private Board board;
 
-	// Piece prawdopodobnie nie bedzie potrzebny, z moveType pomyslec bo to
-	// tylko dla pionka zrobione, piece tez dla pionka
 	public abstract boolean checkIfPieceCanMoveTo(Piece piece, Coordinate from, Coordinate to, MoveType moveType);
 
 	public boolean checkIfRoadToPieceDestinationIsEmpty(Coordinate from, Coordinate to, Board board)
