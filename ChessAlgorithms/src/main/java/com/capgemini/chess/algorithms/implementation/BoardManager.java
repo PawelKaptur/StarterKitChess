@@ -272,31 +272,14 @@ public class BoardManager {
 
 		checkIfRoadToPieceDestinationIsEmpty(piece, from, to, context);
 
-		creatingNewBoard(piece, from, to);
 		updateLists(move);
 		
 		if (isKingInCheck(nextMoveColor)) {
-			whitePieces = new HashMap<Coordinate, Piece>();
-			blackPieces = new HashMap<Coordinate, Piece>();
 			addPiecesToLists();
 			throw new KingInCheckException();
 		}
 		
 		return move;
-	}
-
-	private void creatingNewBoard(Piece piece, Coordinate from, Coordinate to) {
-		Board newBoard = new Board();
-		for (Coordinate coordinate : whitePieces.keySet()) {
-			newBoard.setPieceAt(whitePieces.get(coordinate), coordinate);
-		}
-
-		for (Coordinate coordinate : blackPieces.keySet()) {
-			newBoard.setPieceAt(blackPieces.get(coordinate), coordinate);
-		}
-
-		newBoard.setPieceAt(piece, to);
-		newBoard.setPieceAt(null, from);
 	}
 
 	private void checkIfRoadToPieceDestinationIsEmpty(Piece piece, Coordinate from, Coordinate to, Context context)
@@ -448,6 +431,8 @@ public class BoardManager {
 
 	// moze ponizsze metody do innej klasy
 	private void addPiecesToLists() {
+		whitePieces = new HashMap<Coordinate, Piece>();
+		blackPieces = new HashMap<Coordinate, Piece>();
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinate = new Coordinate(x, y);
@@ -569,12 +554,9 @@ public class BoardManager {
 				
 				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, moveType)) {
 					Move move = setMove(piece, coordinateFrom, coordinateTo, moveType);
-					creatingNewBoard(piece, coordinateFrom, coordinateTo);
 					updateLists(move);
 					if (piece.getType().equals(PieceType.KING)) {
 						if (checkIfNewPositionOfKingWillBeChecked(coordinateTo, opponentPieces)) {
-							whitePieces = new HashMap<Coordinate, Piece>();
-							blackPieces = new HashMap<Coordinate, Piece>();
 							addPiecesToLists();
 							continue;
 						}
