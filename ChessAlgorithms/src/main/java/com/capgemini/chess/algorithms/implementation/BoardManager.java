@@ -625,9 +625,9 @@ public class BoardManager {
 		return fakeBoard;
 	}
 
-	public static <T, E> Coordinate getCoordinatesByKing(Map<T, E> map, E value) {
+	public static <Coordinate, Piece> Coordinate getCoordinatesByKing(Map<Coordinate, Piece> map, Piece value) {
 		
-		for (Entry<T, E> entry : map.entrySet()) {
+		for (Entry<Coordinate, Piece> entry : map.entrySet()) {
 			if (entry.getValue().equals(value)) {
 				return (Coordinate) entry.getKey();
 			}
