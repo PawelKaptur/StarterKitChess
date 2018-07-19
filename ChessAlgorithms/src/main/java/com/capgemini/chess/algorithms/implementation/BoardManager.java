@@ -482,13 +482,21 @@ public class BoardManager {
 	}
 
 	// 2 nastpene metody pewnie mozna jakos zuniwersalizowac
-	private boolean checkingIsWhiteKingInCheck(Coordinate kingCoordinate) {
+	private boolean checkingIsWhiteKingInCheck(Coordinate kingCoordinate){
 		Context context = null;
 		for (Map.Entry<Coordinate, Piece> entry : blackPieces.entrySet()) {
 			Coordinate coordinate = entry.getKey();
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
-			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
+			
+			try {
+				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, Color.WHITE);
+			} catch (InvalidMoveException e1) {
+				
+			}
+			
+			MoveType moveType = setMoveType(kingCoordinate, Color.WHITE);
+			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, moveType)) {
 				try {
 					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
 					context.checkIfRoadToPieceDestinationIsEmpty(coordinate, kingCoordinate, fakeBoard);
@@ -507,7 +515,15 @@ public class BoardManager {
 			Coordinate coordinate = entry.getKey();
 			Piece piece = entry.getValue();
 			context = returningContext(piece);
-			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, MoveType.CAPTURE)) {
+			
+			try {
+				checkIfPieceInCoordinateToIsOpponents(kingCoordinate, Color.BLACK);
+			} catch (InvalidMoveException e1) {
+				
+			}
+			
+			MoveType moveType = setMoveType(kingCoordinate, Color.BLACK);
+			if (context.checkIfPieceCanMoveTo(piece, coordinate, kingCoordinate, moveType)) {
 				try {
 					Board fakeBoard = creatingFakeBoard(piece, coordinate, kingCoordinate);
 					context.checkIfRoadToPieceDestinationIsEmpty(coordinate, kingCoordinate, fakeBoard);
@@ -541,8 +557,18 @@ public class BoardManager {
 		for (int x = 0; x < 8; x++) {
 			for (int y = 0; y < 8; y++) {
 				Coordinate coordinateTo = new Coordinate(x, y);
-				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.ATTACK)) {
-					Move move = setMove(piece, coordinateFrom, coordinateTo, MoveType.ATTACK);
+				Color color = piece.getColor();
+			
+				
+				try {
+					checkIfPieceInCoordinateToIsOpponents(coordinateTo, color);
+				} catch (InvalidMoveException e1) {
+					
+				}
+				MoveType moveType = setMoveType(coordinateTo, color);
+				
+				if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, moveType)) {
+					Move move = setMove(piece, coordinateFrom, coordinateTo, moveType);
 					creatingNewBoard(piece, coordinateFrom, coordinateTo);
 					updateLists(move);
 					if (piece.getType().equals(PieceType.KING)) {
@@ -572,8 +598,23 @@ public class BoardManager {
 			coordinateFrom = opponentEntry.getKey();
 			piece = opponentEntry.getValue();
 			context = returningContext(piece);
+			Color color;
+			if(piece.getColor().equals(Color.BLACK)){
+				color = Color.WHITE;
+			}
+			else{
+				color = Color.BLACK;
+			}
+			
+			try {
+				checkIfPieceInCoordinateToIsOpponents(coordinateTo, color);
+			} catch (InvalidMoveException e1) {
+				
+			}
+			
+			MoveType moveType = setMoveType(coordinateTo, color);
 
-			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, MoveType.CAPTURE)) {
+			if (context.checkIfPieceCanMoveTo(piece, coordinateFrom, coordinateTo, moveType)) {
 				try {
 					Board fakeBoard = creatingFakeBoard(piece, coordinateFrom, coordinateTo);
 					context.checkIfRoadToPieceDestinationIsEmpty(coordinateFrom, coordinateTo, fakeBoard);
