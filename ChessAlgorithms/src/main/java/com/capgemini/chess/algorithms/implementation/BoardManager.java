@@ -263,12 +263,8 @@ public class BoardManager {
 
 		MoveType moveType = null;
 		// en_passant to przerobic
-		if (piece.getType().equals(PieceType.PAWN)) {
-			if (checkIfEnPassant(from, to, nextMoveColor)) {
-				moveType = MoveType.EN_PASSANT;
-			} else{
-				moveType = setMoveType(to, nextMoveColor);
-			}
+		if (piece.getType().equals(PieceType.PAWN) && checkIfEnPassant(from, to, nextMoveColor)) {
+			moveType = MoveType.EN_PASSANT;
 		}
 		else {
 			moveType = setMoveType(to, nextMoveColor);

@@ -543,7 +543,6 @@ public class MyTests {
 		Board board = new Board();
 		BoardManager boardManager = new BoardManager(board);
 		
-		//board.getMoveHistory().add(createDummyMove(board));
 		board.setPieceAt(Piece.WHITE_PAWN, new Coordinate(6, 1));
 		board.setPieceAt(Piece.BLACK_PAWN, new Coordinate(5, 3));
 		
